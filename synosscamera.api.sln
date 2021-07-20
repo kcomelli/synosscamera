@@ -1,0 +1,77 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.api", "src\synosscamera.api\synosscamera.api.csproj", "{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "000-CI-CD", "000-CI-CD", "{D4EDE156-2FFF-43FE-B627-42FB995E8DE9}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "001-Core", "001-Core", "{54AE98EE-9548-4F33-BE64-0D46A416BCAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "010-BackendAPI", "010-BackendAPI", "{890B0013-678C-445B-B9B3-704830B284DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "998-Tools", "998-Tools", "{39053EAC-388A-4AF8-A6CE-C6A1B93835D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "999-Tests", "999-Tests", "{F1262BF7-EDA1-4BA0-A627-E59C9C44F973}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.core", "src\synosscamera.core\synosscamera.core.csproj", "{2AC61BDB-3722-4A10-905E-7543449CB323}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.utilities", "src\synosscamera.utilities\synosscamera.utilities.csproj", "{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.prometheus", "src\synosscamera.prometheus\synosscamera.prometheus.csproj", "{549BC9F6-2651-4929-B366-0A74A83D4A49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.redis", "src\synosscamera.redis\synosscamera.redis.csproj", "{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "synosscamera.station", "src\synosscamera.station\synosscamera.station.csproj", "{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AC61BDB-3722-4A10-905E-7543449CB323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AC61BDB-3722-4A10-905E-7543449CB323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AC61BDB-3722-4A10-905E-7543449CB323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AC61BDB-3722-4A10-905E-7543449CB323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA} = {890B0013-678C-445B-B9B3-704830B284DD}
+		{2AC61BDB-3722-4A10-905E-7543449CB323} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+		{549BC9F6-2651-4929-B366-0A74A83D4A49} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {460C816D-BCDE-4BA7-9145-0CAED8724409}
+	EndGlobalSection
+EndGlobal
