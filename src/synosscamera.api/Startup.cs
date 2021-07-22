@@ -10,11 +10,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using synosscamera.api.Infrastructure.Authentication;
 using synosscamera.api.Infrastructure.Mvc;
 using synosscamera.api.Infrastructure.Swagger;
+using synosscamera.core;
 using synosscamera.core.DependencyInjection;
-using synosscamera.utilities;
-using synosscamera.utilities.Extensions;
+using synosscamera.core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -115,34 +116,42 @@ namespace synosscamera.api
             services.AddVersionedApiExplorer(options => { options.GroupNameFormat = "'v'VVV"; options.SubstituteApiVersionInUrl = true; });
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
+            services.AddSingleton<IPostConfigureOptions<ApiKeyAuthenticationOptions>, ApiKeyAuthenticationOptionsPostConfigureOptions>();
+
             services.AddOptions();
 
             services.AddControllers();
 
-            //services.AddAuthentication(Constants.BasicAuthenticationScheme)
-            //    .AddBasicAuthentication();
-            //services.AddAuthorization();
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = Constants.Security.ApiKeyAuthenticationScheme;
+                o.DefaultSignOutScheme = Constants.Security.ApiKeyAuthenticationScheme;
+                o.DefaultSignInScheme = Constants.Security.ApiKeyAuthenticationScheme;
+                o.DefaultChallengeScheme = Constants.Security.ApiKeyAuthenticationScheme;
+            })
+            .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(Constants.Security.ApiKeyAuthenticationScheme, o =>
+            {
+                o.Realm = "SYN-SS-CAMERA";
+                o.AllowTokenInQueryString = true;
+                o.ReadKeyFromPath = false;
+            });
+
+            services.AddsynossCameraDefaults();
+
+            services.AddAuthorization();
 
             services.AddMemoryCache();
 
             services.AddSwaggerGen(c =>
             {
-                c.AddSecurityDefinition("basicAuth", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Please enter basic auth token",
+                    Description = "Client API key auhtorization. Example: \"Authorization: ApiKey {apiKey}\"",
                     Name = "Authorization",
-                    Scheme = "Basic",
+                    Scheme = Constants.Security.ApiKeyAuthenticationScheme,
                     Type = SecuritySchemeType.Http
                 });
-                //c.AddSecurityRequirement(new OpenApiSecurityRequirement{
-                //    {
-                //    new OpenApiSecurityScheme{
-                //        Reference = new OpenApiReference{
-                //        Id = "Bearer", //The name of the previously defined security scheme.
-                //        Type = ReferenceType.SecurityScheme}
-                //        },new List<string>()
-                //    }});
 
                 GetXmlCommentsPath().ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
                 //c.OperationFilter<AddBasicAuthorizationHeaderParameter>();
