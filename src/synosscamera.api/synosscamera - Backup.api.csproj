@@ -4,11 +4,6 @@
         <TargetFramework>net5.0</TargetFramework>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>.</DockerfileContext>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,6 +24,10 @@
       <ProjectReference Include="..\synosscamera.redis\synosscamera.redis.csproj" />
       <ProjectReference Include="..\synosscamera.station\synosscamera.station.csproj" />
       <ProjectReference Include="..\synosscamera.utilities\synosscamera.utilities.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\Mvc\" />
     </ItemGroup>
 
 
