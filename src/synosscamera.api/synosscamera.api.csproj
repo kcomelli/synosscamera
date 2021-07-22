@@ -28,7 +28,6 @@
       <ProjectReference Include="..\synosscamera.prometheus\synosscamera.prometheus.csproj" />
       <ProjectReference Include="..\synosscamera.redis\synosscamera.redis.csproj" />
       <ProjectReference Include="..\synosscamera.station\synosscamera.station.csproj" />
-      <ProjectReference Include="..\synosscamera.utilities\synosscamera.utilities.csproj" />
     </ItemGroup>
 
 

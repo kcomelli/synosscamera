@@ -41,7 +41,7 @@ namespace synosscamera.core.Middleware
                 return Task.CompletedTask;
             });
 
-            await _next(context).ConfigureAwait(false);
+            await _next(context);
         }
     }
 }

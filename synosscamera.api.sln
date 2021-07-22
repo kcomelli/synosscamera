@@ -21,13 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "999-Tests", "999-Tests", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.core", "src\synosscamera.core\synosscamera.core.csproj", "{2AC61BDB-3722-4A10-905E-7543449CB323}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.utilities", "src\synosscamera.utilities\synosscamera.utilities.csproj", "{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.prometheus", "src\synosscamera.prometheus\synosscamera.prometheus.csproj", "{549BC9F6-2651-4929-B366-0A74A83D4A49}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.redis", "src\synosscamera.redis\synosscamera.redis.csproj", "{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "synosscamera.station", "src\synosscamera.station\synosscamera.station.csproj", "{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.station", "src\synosscamera.station\synosscamera.station.csproj", "{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +41,6 @@ Global
 		{2AC61BDB-3722-4A10-905E-7543449CB323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AC61BDB-3722-4A10-905E-7543449CB323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AC61BDB-3722-4A10-905E-7543449CB323}.Release|Any CPU.Build.0 = Release|Any CPU
-		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{549BC9F6-2651-4929-B366-0A74A83D4A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -66,7 +60,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA} = {890B0013-678C-445B-B9B3-704830B284DD}
 		{2AC61BDB-3722-4A10-905E-7543449CB323} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
-		{989CAD4D-C40E-4773-AAD5-3B11E16EAEF5} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
 		{549BC9F6-2651-4929-B366-0A74A83D4A49} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
 		{D16F1F3E-5E08-4FB4-8BEE-FB506F7BB3D0} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
 		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
