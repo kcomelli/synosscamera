@@ -1,9 +1,6 @@
 ﻿using synosscamera.core.Infrastructure.Cache;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace synosscamera.core.Extensions
 {
@@ -12,6 +9,23 @@ namespace synosscamera.core.Extensions
     /// </summary>
     public static class CacheSettingsExtensions
     {
+        /// <summary>
+        /// Ensure cache settings for a specified key. If key not found a setting with disabled cache will be returned
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="settingsKey"></param>
+        /// <returns></returns>
+        public static CacheSettings EnsureSettings(this Dictionary<string, CacheSettings> settings, string settingsKey)
+        {
+            var ret = new CacheSettings() { Enabled = false };
+
+            if (settings?.ContainsKey(settingsKey) == true)
+                ret = settings[settingsKey];
+
+            ret.GroupId = settingsKey;
+            return ret;
+        }
+
         /// <summary>
         /// Get absolute expiration time span value according to the configured settings
         /// </summary>

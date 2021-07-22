@@ -25,6 +25,9 @@ using System.Runtime;
 
 namespace synosscamera.api
 {
+    /// <summary>
+    /// Startup class
+    /// </summary>
     public class Startup
     {
         /// <summary>
@@ -136,7 +139,7 @@ namespace synosscamera.api
                 o.ReadKeyFromPath = false;
             });
 
-            services.AddsynossCameraDefaults();
+            services.AddsynossCameraDefaults(Configuration);
 
             services.AddAuthorization();
 
@@ -144,17 +147,28 @@ namespace synosscamera.api
 
             services.AddSwaggerGen(c =>
             {
-                c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+                c.AddSecurityDefinition(Constants.Security.ApiKeyAuthenticationScheme, new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
                     Description = "Client API key auhtorization. Example: \"Authorization: ApiKey {apiKey}\"",
                     Name = "Authorization",
                     Scheme = Constants.Security.ApiKeyAuthenticationScheme,
-                    Type = SecuritySchemeType.Http
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = Constants.Security.ApiKeyAuthenticationScheme }
+                        },
+                        new string[]{ }
+                    }
                 });
 
                 GetXmlCommentsPath().ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
-                //c.OperationFilter<AddBasicAuthorizationHeaderParameter>();
+                //c.OperationFilter<AddApiKeyAuthorizationHeaderParameter>();
                 c.ParameterFilter<QueryArrayParamFilter>();
             });
 
@@ -195,6 +209,10 @@ namespace synosscamera.api
 
             app.UseRouting();
 
+            app.UseCors("AllOrigins");
+
+            app.UseAuthorization();
+
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>
@@ -207,10 +225,6 @@ namespace synosscamera.api
                         options.RoutePrefix = String.Empty;
                     }
                 });
-
-            app.UseCors("AllOrigins");
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

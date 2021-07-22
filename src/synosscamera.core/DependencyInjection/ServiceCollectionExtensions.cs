@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using synosscamera.core.Abstractions;
+using synosscamera.core.Configuration;
 using synosscamera.core.Diagnostics;
 using synosscamera.core.Infrastructure.Cache;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using synosscamera.core.Infrastructure.Security;
 
 namespace synosscamera.core.DependencyInjection
 {
@@ -16,22 +15,48 @@ namespace synosscamera.core.DependencyInjection
     /// </summary>
     public static class ServiceCollectionExtensions
     {
-       
+
         /// <summary>
         /// Topmind asp.net defaults
         /// </summary>
         /// <param name="services">Service collection instance</param>
+        /// <param name="configuration">Configuration access</param>
         /// <returns>Service collection instance</returns>
-        public static IServiceCollection AddsynossCameraDefaults(this IServiceCollection services)
+        public static IServiceCollection AddsynossCameraDefaults(this IServiceCollection services, IConfiguration configuration)
         {
             services.CheckArgumentNull(nameof(services));
 
+            services.AddOptionsAndSettings(configuration);
             services.AddDefaultDistributedCacheWrapper();
             services.AddDefaultMemoryCacheWrapper();
 
+            services.TryAddSingleton<IApiKeyProvider, ConfigurationApiKeyProvider>();
+
             return services;
         }
-        
+
+        /// <summary>
+        /// Add options and default settings
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration">Configuration access</param>
+        /// <returns></returns>
+        public static IServiceCollection AddOptionsAndSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.CheckArgumentNull(nameof(services));
+
+            services.AddOptions();
+            services.Configure<SynossSettings>(configuration.GetSection(nameof(SynossSettings)));
+
+            services.AddSingleton<ICacheSettingsProvider>((prov) =>
+            {
+                var ctx = prov.GetService<IOptions<SynossSettings>>();
+                return ctx?.Value;
+            });
+
+            return services;
+        }
+
         /// <summary>
         /// Add default distributed cache wrapper
         /// </summary>

@@ -12,7 +12,6 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace synosscamera.api.Infrastructure.Authentication
@@ -44,7 +43,7 @@ namespace synosscamera.api.Infrastructure.Authentication
             cacheWrapper.CheckArgumentNull(nameof(cacheWrapper));
 
             _cacheWrapper = cacheWrapper;
-            _logger = logger.CreateLogger< ApiKeyAuthenticationHandler>();
+            _logger = logger.CreateLogger<ApiKeyAuthenticationHandler>();
             _apiKeyProvider = apiKeyProvider;
         }
 
@@ -69,9 +68,9 @@ namespace synosscamera.api.Infrastructure.Authentication
                 _logger.LogDebug("Skipped api key from path extraction because it is not enabled for scheme '{scheme}'.", this.Scheme.Name);
             }
 
-            if(Options.AllowTokenInQueryString)
+            if (Options.AllowTokenInQueryString)
             {
-                if(Request.Query.TryGetValue(Options.TokenQueryParameterName, out StringValues tokenFromQueryString))
+                if (Request.Query.TryGetValue(Options.TokenQueryParameterName, out StringValues tokenFromQueryString))
                 {
                     _logger.LogInformation("Extracted valid api key token from request query string.");
                     _logger.LogTrace("Extracted api key {apiKey} from request querystring for scheme '{scheme}'.", tokenFromQueryString.ToString(), Scheme.Name);
@@ -116,22 +115,22 @@ namespace synosscamera.api.Infrastructure.Authentication
 
                 var apiKeyValid = await _apiKeyProvider.VerifyApiKey(apiKey, Context.RequestAborted);
 
-                if(!apiKeyValid)
+                if (!apiKeyValid.valid)
                     return AuthenticateResult.Fail($"Invalid api key for scheme {this.Scheme.Name}");
 
 
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, Constants.Security.ApiUserName),
-                    new Claim(ClaimTypes.Name, Constants.Security.ApiUserName),
-                    new Claim(Constants.Security.Claims.Subject, Constants.Security.ApiUserName),
+                    new Claim(ClaimTypes.NameIdentifier, apiKeyValid.keyData.Name ?? Constants.Security.ApiUserName),
+                    new Claim(ClaimTypes.Name, apiKeyValid.keyData.Name ?? Constants.Security.ApiUserName),
+                    new Claim(Constants.Security.Claims.Subject, apiKeyValid.keyData.Name ?? Constants.Security.ApiUserName),
                 };
 
                 return AuthenticateResult.Success(CreateAuthTicket(apiKey, claims));
             }
             finally
             {
-               
+
             }
         }
 
@@ -202,7 +201,7 @@ namespace synosscamera.api.Infrastructure.Authentication
             return true;
         }
 
-        private AuthenticationTicket CreateAuthTicket(string apiKey,  Claim[] claims)
+        private AuthenticationTicket CreateAuthTicket(string apiKey, Claim[] claims)
         {
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
