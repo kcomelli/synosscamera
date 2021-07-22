@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace synosscamera.core
+﻿namespace synosscamera.core
 {
     public static class Constants
     {
@@ -56,7 +50,23 @@ namespace synosscamera.core
                 /// Claim type of subject or id of a claims principal
                 /// </summary>
                 public const string Subject = "sub";
-                
+
+            }
+        }
+        /// <summary>
+        /// Cache constants
+        /// </summary>
+        public static class Cache
+        {
+            /// <summary>
+            /// Settings keys
+            /// </summary>
+            public static class SettingKeys
+            {
+                /// <summary>
+                /// Api key auth cache key
+                /// </summary>
+                public const string ApiKeyAuthenticationCacheKey = "ApiKeyAuthenticationCache";
             }
         }
     }
