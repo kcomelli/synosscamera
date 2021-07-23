@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace synosscamera.station.Configuration
+﻿namespace synosscamera.station.Configuration
 {
     /// <summary>
     /// surveillance station settings
@@ -15,6 +9,10 @@ namespace synosscamera.station.Configuration
         /// Base url of api
         /// </summary>
         public string BaseUrl { get; set; }
+        /// <summary>
+        /// Optional session name used to connect to sation API
+        /// </summary>
+        public string SessionNameForStation { get; set; }
         /// <summary>
         /// Username to connect to station
         /// </summary>

@@ -16,6 +16,7 @@ using synosscamera.api.Infrastructure.Swagger;
 using synosscamera.core;
 using synosscamera.core.DependencyInjection;
 using synosscamera.core.Extensions;
+using synosscamera.station.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -140,6 +141,7 @@ namespace synosscamera.api
             });
 
             services.AddsynossCameraDefaults(Configuration);
+            services.AddSurveillanceStationApis(Configuration);
 
             services.AddAuthorization();
 
