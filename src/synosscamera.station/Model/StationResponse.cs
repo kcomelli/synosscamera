@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace synosscamera.station.Model
+﻿namespace synosscamera.station.Model
 {
     /// <summary>
     /// Station API response object
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class StationResponse<T>
+    public abstract class StationResponse<T>
     {
         /// <summary>
         /// Indicates success
