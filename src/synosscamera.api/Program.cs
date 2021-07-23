@@ -68,6 +68,11 @@ namespace synosscamera.api
                     // overwrite settings via arguments
                     if (args != null)
                         config.AddCommandLine(args);
+
+                    if (hostingContext.HostingEnvironment.IsDevelopment())
+                    {
+                        config.AddUserSecrets<Program>();
+                    }
                 })
                 .UseSerilog()
                 .ConfigureLogging((hostingContext, logging) =>
