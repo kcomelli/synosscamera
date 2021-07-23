@@ -23,26 +23,38 @@ namespace synosscamera.api.Infrastructure.Swagger
         /// <param name="context"></param>
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
-            var filters = filterPipeline.Select(filterInfo => filterInfo.Filter)
-                                        .Where(filter => filter is AuthorizeFilter);
+            if(context.GetControllerAndActionAttributes<AllowAnonymousAttribute>().Any())
+            {
+                return;
+            }
 
-            // Policy names map to scopes
-            var requiredSchemes = context.MethodInfo
-                .GetCustomAttributes(true)
-                .OfType<AuthorizeAttribute>()
+            var actionAttributes = context.GetControllerAndActionAttributes<AuthorizeAttribute>();
+
+            if (!actionAttributes.Any())
+            {
+                return;
+            }
+
+            if (!operation.Responses.ContainsKey("401"))
+            {
+                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized. Authentication is required in order to use this operation." });
+            }
+
+            if (!operation.Responses.ContainsKey("403"))
+            {
+                operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden. The current authenticated client or user does not have permissions to use this operation." });
+            }
+
+
+            var requiredSchemes = actionAttributes
                 .Select(attr => attr.AuthenticationSchemes)
                 .Distinct()
                 .ToList();
 
 
-            var allowAnonymous = context.ApiDescription.HasAttribute<AllowAnonymousAttribute>();
-
-            if (!allowAnonymous && filters.Count() > 0)
+            if (requiredSchemes?.Any(filter => filter == Constants.Security.ApiKeyAuthenticationScheme) == true)
             {
-                if (filters.Any(filter => ((AuthorizeFilter)filter).Policy.AuthenticationSchemes.Contains(Constants.Security.ApiKeyAuthenticationScheme)))
-                {
-                    operation.Security = new List<OpenApiSecurityRequirement>
+                operation.Security = new List<OpenApiSecurityRequirement>
                     {
                         new OpenApiSecurityRequirement()
                         {
@@ -54,25 +66,6 @@ namespace synosscamera.api.Infrastructure.Swagger
                             }
                         }
                     };
-                }
-            }
-            else if (!allowAnonymous && requiredSchemes.Count() > 0)
-            {
-                if (requiredSchemes.Any(filter => filter == Constants.Security.ApiKeyAuthenticationScheme))
-                {
-                    operation.Security = new List<OpenApiSecurityRequirement>
-                    {
-                        new OpenApiSecurityRequirement()
-                        {
-                            {  new OpenApiSecurityScheme()
-                                {
-                                    Reference = new OpenApiReference() { Type = ReferenceType.SecurityScheme, Id = Constants.Security.ApiKeyAuthenticationScheme }
-                                },
-                                new string[]{ }
-                            }
-                        }
-                    };
-                }
             }
         }
     }
