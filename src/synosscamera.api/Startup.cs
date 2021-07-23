@@ -156,19 +156,8 @@ namespace synosscamera.api
                     Type = SecuritySchemeType.ApiKey
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = Constants.Security.ApiKeyAuthenticationScheme }
-                        },
-                        new string[]{ }
-                    }
-                });
-
                 GetXmlCommentsPath().ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
-                //c.OperationFilter<AddApiKeyAuthorizationHeaderParameter>();
+                c.OperationFilter<AddApiKeyAuthorizationHeaderParameter>();
                 c.ParameterFilter<QueryArrayParamFilter>();
             });
 
