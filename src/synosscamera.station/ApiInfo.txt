@@ -1,0 +1,26 @@
+﻿
+https://global.download.synology.com/download/Document/Software/DeveloperGuide/Package/SurveillanceStation/All/enu/Surveillance_Station_Web_API.pdf
+
+API Definition
+Every API will define the following items:
+
+Name
+It will go after “SYNO.XXX.YYY”. XXX will represent the application name, YYY will represent the feature
+category. For example, SYNO.SurveillanceStation.Camera, SurveillanceStation means the API is
+provided by the Surveillance Station, Camera means this API will retrieve the camera configurations.
+
+URL path
+Surveillance Station Web API does not preserve a constant URL for every API. Instead, 3rd party
+applications need to use the command SYNO.API.Info to retrieve every API’s URL path. SYNO.API.Info is
+the only API with constant URL, and it does not need authorization, its path is /webapi/query.cgi
+
+Method
+Every method is unique in its own API, and it has to be defined when you use the API. For example,
+SYNO.SurveillanceStation.Camera API, call the method GetInfo will retrieve some camera
+configurations.
+
+Version
+Surveillance Station Web API will require you designate an API version to ensure the result is within the
+expectation. SYNO.API.Info will return every API’s supported versions. “Not supported version” will be
+returned if API is not supported. We may drop the support on the old API version, make sure you keep
+this in mind.
