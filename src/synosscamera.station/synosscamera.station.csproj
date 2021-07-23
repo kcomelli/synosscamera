@@ -5,4 +5,9 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Model\" />
+      <Folder Include="DependencyInjection\" />
+    </ItemGroup>
+
 </Project>
