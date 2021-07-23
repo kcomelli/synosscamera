@@ -207,12 +207,14 @@ namespace synosscamera.core.Extensions
                     url = url.Substring(idx + 1);
                 }
 
-                var query = QueryHelpers.ParseNullableQuery(url);
-                if (query != null)
+                if (url.IndexOf("://") < 0)
                 {
-                    return query.AsNameValueCollection();
+                    var query = QueryHelpers.ParseNullableQuery(url);
+                    if (query != null)
+                    {
+                        return query.AsNameValueCollection();
+                    }
                 }
-
             }
 
             return new NameValueCollection();
