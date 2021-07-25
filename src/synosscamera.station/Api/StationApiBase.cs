@@ -104,7 +104,7 @@ namespace synosscamera.station.Api
         /// <param name="parameter">Additional parameters for querystring</param>
         /// <param name="cancellation">Cancellation token</param>
         /// <returns>A relative url including the api path</returns>
-        protected async Task<string> GetUrl(string method, string action = null, int version = 1, Dictionary<string, object> parameter = null, CancellationToken cancellation = default)
+        protected async Task<(string action, string query)> GetUrl(string method, string action = null, int version = 1, Dictionary<string, object> parameter = null, CancellationToken cancellation = default)
         {
             var path = await ResolvePathForApi(cancellation);
             var versions = await ResolveVersionsForApi(cancellation);
@@ -112,7 +112,7 @@ namespace synosscamera.station.Api
             if (parameter == null)
                 parameter = new Dictionary<string, object>();
 
-            var ret = string.Empty.AppendEndpoint(path);
+            var uriAction = string.Empty.AppendEndpoint(path);
 
             parameter["api"] = ApiName;
             parameter["method"] = method;
@@ -124,7 +124,7 @@ namespace synosscamera.station.Api
             if (_settings.SessionNameForStation.IsPresent())
                 parameter["session"] = _settings.SessionNameForStation;
 
-            return RestApiClientBase.CreateQueryString(parameter);
+            return (uriAction, RestApiClientBase.CreateQueryString(parameter));
         }
         /// <summary>
         /// Resolve the api path using the api name
@@ -158,11 +158,11 @@ namespace synosscamera.station.Api
         /// </summary>
         /// <param name="error"></param>
         /// <returns></returns>
-        protected (ApiErrorResponse error, HttpStatusCode statusCode) ErrorResponseFromStationError(StationError error)
+        protected virtual (ApiErrorResponse error, HttpStatusCode statusCode) ErrorResponseFromStationError(StationError error)
         {
             var ret = new ApiErrorResponse();
             var apiError = new ApiError();
-            var statusCode = HttpStatusCode.InternalServerError;
+            var statusCode = HttpStatusCode.FailedDependency;
 
             ret.IsApiError = false;
             ret.Errors = new ApiError[] { apiError };
@@ -179,10 +179,22 @@ namespace synosscamera.station.Api
                 apiError.ExternalErrorCode = error.Code.ToString();
 
                 // TODO: mao code to internal errors and adjust HttpStatus
-                apiError.ErrorMessage = message;
+                apiError.ErrorMessage = $"SurveillanceStation API error: {message}";
                 apiError.ErrorCode = error.Code.ToString();
                 apiError.ErrorSource = "SurveillanceStation";
                 apiError.ErrorType = ApiErrorTypes.ExternalRestApi;
+
+                switch (error.Code)
+                {
+                    case StationConstants.ErrorCodes.Common.ConnectionTimeout:
+                        statusCode = HttpStatusCode.RequestTimeout;
+                        break;
+                    case StationConstants.ErrorCodes.Common.ApiDoesNotExist:
+                    case StationConstants.ErrorCodes.Common.MethodDoesNotExist:
+                    case StationConstants.ErrorCodes.Common.ApiVersionNotSupported:
+                        statusCode = HttpStatusCode.NotImplemented;
+                        break;
+                }
             }
 
             return (ret, statusCode);

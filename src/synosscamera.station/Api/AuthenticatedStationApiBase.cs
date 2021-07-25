@@ -41,12 +41,17 @@ namespace synosscamera.station.Api
         /// </summary>
         /// <param name="cancellation">Cancellation token</param>
         /// <returns>True if login suceed or already logged in</returns>
-        protected Task<bool> VerifyLoggedIn(CancellationToken cancellation = default)
+        protected async Task<bool> VerifyLoggedIn(CancellationToken cancellation = default)
         {
-            if (SynoToken.IsMissing())
-                return StationApiUtil.Login(cancellation);
+            // load and cache api list
+            ((IStationApi)this).SetApiList(await StationApiUtil.ApiList(cancellation));
 
-            return Task.FromResult(true);
+            if (SynoToken.IsMissing())
+            {
+                return await StationApiUtil.Login(cancellation);
+            }
+
+            return true;
         }
     }
 }

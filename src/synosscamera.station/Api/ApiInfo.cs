@@ -60,7 +60,7 @@ namespace synosscamera.station.Api
                 { "query", queryApiFilter }
             }, cancellation: cancellation);
 
-            var response = await Client.CallGetApiAsync<ApiInfoQueryResponse>(string.Empty, query, token: cancellation);
+            var response = await Client.CallGetApiAsync<ApiInfoQueryResponse>(query.action, query.query, token: cancellation);
 
             if (response?.Success == true)
             {
@@ -78,6 +78,8 @@ namespace synosscamera.station.Api
                 var errorInfo = ErrorResponseFromStationError(response.Error);
                 ex.ErrorResponse = errorInfo.error;
                 ex.UpdateStatusCode(errorInfo.statusCode);
+
+                throw ex;
             }
 
             return response;

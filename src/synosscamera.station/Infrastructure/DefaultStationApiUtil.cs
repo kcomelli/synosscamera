@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using synosscamera.core.Diagnostics;
 using synosscamera.station.Abstractions;
 using synosscamera.station.Api;
 using synosscamera.station.Model.ApiInfo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,29 +18,45 @@ namespace synosscamera.station.Infrastructure
     public class DefaultStationApiUtil : IStationApiUtil
     {
         private readonly ILogger _logger;
-        private readonly IEnumerable<IStationApi> _stationApis;
+        private IServiceProvider _serviceProvider;
+        private IEnumerable<IStationApi> _stationApis = null;
 
         /// <summary>
         /// Constructor of the class
         /// </summary>
         /// <param name="logger">Logger instance</param>
-        /// <param name="stationApis">Registered station API classes</param>
-        public DefaultStationApiUtil(ILogger<DefaultStationApiUtil> logger, IEnumerable<IStationApi> stationApis)
+        /// <param name="sp">Service provider</param>
+        public DefaultStationApiUtil(ILogger<DefaultStationApiUtil> logger, IServiceProvider sp)
         {
             logger.CheckArgumentNull(nameof(logger));
-            stationApis.CheckArgumentNull(nameof(stationApis));
+            sp.CheckArgumentNull(nameof(sp));
 
             _logger = logger;
-            _stationApis = stationApis;
+            _serviceProvider = sp;
+
+
+        }
+        /// <summary>
+        /// Get the list of registered station APIs
+        /// </summary>
+        protected IEnumerable<IStationApi> StationApis
+        {
+            get
+            {
+                if (_stationApis == null)
+                    _stationApis = _serviceProvider.GetServices<IStationApi>();
+
+                return _stationApis;
+            }
         }
         /// <summary>
         /// Get the registered ApiInfo class
         /// </summary>
-        protected ApiInfo ApiInfo => (ApiInfo)_stationApis.FirstOrDefault(o => o is ApiInfo);
+        protected ApiInfo ApiInfo => (ApiInfo)StationApis.FirstOrDefault(o => o is ApiInfo);
         /// <summary>
         /// Get the registered ApiAuth class
         /// </summary>
-        protected ApiAuth ApiAuth => (ApiAuth)_stationApis.FirstOrDefault(o => o is ApiAuth);
+        protected ApiAuth ApiAuth => (ApiAuth)StationApis.FirstOrDefault(o => o is ApiAuth);
 
         /// <inheritdoc/>
         public async Task<Dictionary<string, ApiDetails>> ApiList(CancellationToken cancellationToken = default)
@@ -48,9 +66,9 @@ namespace synosscamera.station.Infrastructure
                 var response = await ApiInfo.GetApisAsync(cancellation: cancellationToken);
                 if (response.Success)
                 {
-                    if (_stationApis != null)
+                    if (StationApis != null)
                     {
-                        foreach (var api in _stationApis)
+                        foreach (var api in StationApis)
                         {
                             api.SetApiList(response.Data);
                         }
@@ -71,9 +89,9 @@ namespace synosscamera.station.Infrastructure
 
                 if (response.Success)
                 {
-                    if (_stationApis != null)
+                    if (StationApis != null)
                     {
-                        foreach (var api in _stationApis)
+                        foreach (var api in StationApis)
                         {
                             api.SynoToken = response.Data.Synotoken;
                         }
@@ -94,9 +112,9 @@ namespace synosscamera.station.Infrastructure
 
                 if (response.Success)
                 {
-                    if (_stationApis != null)
+                    if (StationApis != null)
                     {
-                        foreach (var api in _stationApis)
+                        foreach (var api in StationApis)
                         {
                             api.SynoToken = null;
                         }

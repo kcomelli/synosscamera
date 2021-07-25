@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using synosscamera.core.Abstractions;
+using synosscamera.core.Model.Dto;
 using synosscamera.station.Configuration;
 using synosscamera.station.Infrastructure;
+using synosscamera.station.Model;
 using synosscamera.station.Model.ApiInfo;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -63,7 +66,7 @@ namespace synosscamera.station.Api
                 { "enable_syno_token",  "yes" }
             }, cancellation: cancellationToken);
 
-            var response = await Client.CallGetApiAsync<ApiAuthLoginResponse>(string.Empty, query, token: cancellationToken);
+            var response = await Client.CallGetApiAsync<ApiAuthLoginResponse>(query.action, query.query, token: cancellationToken);
 
             if (response?.Success == true)
             {
@@ -74,7 +77,15 @@ namespace synosscamera.station.Api
             else
             {
                 Logger.LogDebug("Error logging into station with code '{errorCode}'.", response.Error?.Code ?? -1);
-                // trhow error
+                var ex = Client.LastError as StationApiException;
+                if (ex == null)
+                    ex = new StationApiException("Error logging into station station");
+
+                var errorInfo = ErrorResponseFromStationError(response.Error);
+                ex.ErrorResponse = errorInfo.error;
+                ex.UpdateStatusCode(errorInfo.statusCode);
+
+                throw ex;
 
             }
 
@@ -93,7 +104,7 @@ namespace synosscamera.station.Api
                 { "session",  Settings.SessionNameForStation }
             }, cancellation: cancellationToken);
 
-            var response = await Client.CallGetApiAsync<ApiAuthLogoutResponse>(string.Empty, query, token: cancellationToken);
+            var response = await Client.CallGetApiAsync<ApiAuthLogoutResponse>(query.action, query.query, token: cancellationToken);
 
             if (response?.Success == true)
             {
@@ -104,7 +115,15 @@ namespace synosscamera.station.Api
             else
             {
                 Logger.LogDebug("Error logging out of station with code '{errorCode}'.", response.Error?.Code ?? -1);
-                // trhow error
+                var ex = Client.LastError as StationApiException;
+                if (ex == null)
+                    ex = new StationApiException("Error logging out from station");
+
+                var errorInfo = ErrorResponseFromStationError(response.Error);
+                ex.ErrorResponse = errorInfo.error;
+                ex.UpdateStatusCode(errorInfo.statusCode);
+
+                throw ex;
 
             }
 
@@ -120,6 +139,22 @@ namespace synosscamera.station.Api
         protected override Task<(int minVersion, int maxVersion)> ResolveVersionsForApi(CancellationToken cancellation = default)
         {
             return Task.FromResult((1, 3));
+        }
+        /// <inheritdoc/>
+        protected override (ApiErrorResponse error, HttpStatusCode statusCode) ErrorResponseFromStationError(StationError error)
+        {
+            var ret = base.ErrorResponseFromStationError(error);
+            var errResponse = ret.error;
+            var statusCode = ret.statusCode;
+
+            switch (error.Code)
+            {
+                case StationConstants.Api.ApiAuth.ErrorCodes.MaxTriesReached:
+                    statusCode = HttpStatusCode.TooManyRequests;
+                    break;
+            }
+
+            return (errResponse, statusCode);
         }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Api camer list response
     /// </summary>
-    public class ApiCameraListResponse : StationResponse<CameraInfo>
+    public class ApiCameraListResponse : StationResponse<CamerasList>
     {
     }
 }

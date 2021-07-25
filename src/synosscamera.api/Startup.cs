@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -174,6 +175,9 @@ namespace synosscamera.api
                                       builder.AllowAnyHeader();
                                   });
             });
+
+            // add IMapper injection possibilities
+            services.AddAutoMapper(TypeCacheUtility.GetInheritedTypes<Profile>().ToArray());
         }
 
         private List<string> GetXmlCommentsPath()
