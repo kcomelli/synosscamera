@@ -3,7 +3,7 @@
     /// <summary>
     /// Logout response
     /// </summary>
-    public class ApiAuthLogoutResponse : StationResponse<dynamic>
+    public class ApiAuthLogoutResponse : StationResponseBase
     {
     }
 }

@@ -53,5 +53,13 @@ namespace synosscamera.station.Infrastructure
                 client.DefaultRequestHeaders.Add(StationConstants.ApiDefaults.TokenHeaderName, SynoToken);
             }
         }
+        /// <inheritdoc/>
+        protected async override Task<ApiClientException> ExceptionFromResponse(HttpResponseMessage response, CancellationToken canellation = default)
+        {
+            if (response != null)
+                return await StationApiException.FromHttpResponseAsync(response, "REST Api error - " + (response?.StatusCode.ToString() ?? "0") + " (" + response.ReasonPhrase + ")");
+
+            return null;
+        }
     }
 }

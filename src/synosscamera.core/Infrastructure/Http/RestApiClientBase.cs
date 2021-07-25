@@ -429,8 +429,7 @@ namespace synosscamera.core.Infrastructure.Http
 
             Logger.LogDebug("Recevied API-Client non-success response: {statusCode} - '{response}'", response?.StatusCode ?? 0, responseString ?? "null");
 
-            if (response != null)
-                LastError = await ApiClientException.FromHttpResponseAsync(response, "REST Api error - " + (response?.StatusCode.ToString() ?? "0") + " (" + response.ReasonPhrase + ")");
+            LastError = await ExceptionFromResponse(response);
 
             var returnValue = await HandleNonSuccessCode<T>(response, millisecondsNeeded).ConfigureAwait(false);
 
@@ -443,7 +442,19 @@ namespace synosscamera.core.Infrastructure.Http
 
             return returnValue.returnValue;
         }
+        /// <summary>
+        /// Get api exception from response
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="canellation"></param>
+        /// <returns></returns>
+        protected virtual async Task<ApiClientException> ExceptionFromResponse(HttpResponseMessage response, CancellationToken canellation = default)
+        {
+            if (response != null)
+                return await ApiClientException.FromHttpResponseAsync(response, "REST Api error - " + (response?.StatusCode.ToString() ?? "0") + " (" + response.ReasonPhrase + ")");
 
+            return null;
+        }
         /// <summary>
         /// Allows a client implementation to handle a non-success status code. 
         /// If handled, the client should return true in order to avoid exceptions 
@@ -480,7 +491,7 @@ namespace synosscamera.core.Infrastructure.Http
 
         }
 
-       
+
 
         /// <summary>
         /// Convert an object to json data
