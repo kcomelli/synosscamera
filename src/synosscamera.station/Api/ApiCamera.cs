@@ -55,26 +55,38 @@ namespace synosscamera.station.Api
                 return resp;
             }
 
-            var query = await GetUrl(StationConstants.Api.ApiCamera.Methods.List, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
+            if (await VerifyLoggedIn(cancellation))
             {
-                { "limit", 100 }
-            }, cancellation: cancellation);
 
-            var response = await Client.CallGetApiAsync<ApiCameraListResponse>(string.Empty, query, token: cancellation);
+                var query = await GetUrl(StationConstants.Api.ApiCamera.Methods.List, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
+                {
+                    { "limit", 100 }
+                }, cancellation: cancellation);
 
-            if (response?.Success == true)
-            {
-                Logger.LogDebug("Retrieved camera list form station.");
-                Cache.Set<ApiCameraListResponse>(Constants.Cache.SettingKeys.StationCameraListCache, CameraListKey, response);
-                return response;
+                var response = await Client.CallGetApiAsync<ApiCameraListResponse>(query.action, query.query, token: cancellation);
+
+                if (response?.Success == true)
+                {
+                    Logger.LogDebug("Retrieved camera list form station.");
+                    Cache.Set<ApiCameraListResponse>(Constants.Cache.SettingKeys.StationCameraListCache, CameraListKey, response);
+                    return response;
+                }
+                else
+                {
+                    Logger.LogDebug("Error loading camera list form station with code '{errorCode}'.", response.Error?.Code ?? -1);
+                    var ex = Client.LastError as StationApiException;
+                    if (ex == null)
+                        ex = new StationApiException("Error loading camera list from station");
+
+                    var errorInfo = ErrorResponseFromStationError(response.Error);
+                    ex.ErrorResponse = errorInfo.error;
+                    ex.UpdateStatusCode(errorInfo.statusCode);
+
+                    throw ex;
+                }
             }
-            else
-            {
-                Logger.LogDebug("Error loading camera list form station with code '{errorCode}'.", response.Error?.Code ?? -1);
-                // trhow error
-            }
 
-            return response;
+            return null;
         }
     }
 }

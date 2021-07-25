@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json;
-
-namespace synosscamera.station.Model.ApiInfo
+﻿namespace synosscamera.core.Model.Dto.Camera
 {
     /// <summary>
-    /// Camera info object
+    /// Camera details
     /// </summary>
-    public class CameraInfo
+    public class CameraDetails
     {
         /// <summary>
         /// Id of the camera
@@ -14,21 +12,10 @@ namespace synosscamera.station.Model.ApiInfo
         /// <summary>
         /// Status of the camera
         /// </summary>
-        public CameraStatus Status { get; set; }
-        /// <summary>
-        /// Digital output number
-        /// </summary>
-        [JsonProperty("DONum")]
-        public int DONum { get; set; }
-        /// <summary>
-        /// Digital input number
-        /// </summary>
-        [JsonProperty("DINum")]
-        public int DINum { get; set; }
+        public CameraState Status { get; set; }
         /// <summary>
         /// Name of the camera
         /// </summary>
-        [JsonProperty("newName")]
         public string Name { get; set; }
         /// <summary>
         /// IP Address of the camera

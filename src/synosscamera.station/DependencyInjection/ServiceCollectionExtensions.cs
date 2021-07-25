@@ -34,6 +34,7 @@ namespace synosscamera.station.DependencyInjection
             services.AddOptions();
             services.Configure<SurveillanceStationSettings>(configuration.GetSection(nameof(SurveillanceStationSettings)));
 
+            services.AddScoped<SurveillanceStationClient>();
 
             services.AddHttpClient(typeof(SurveillanceStationClient).Name)
                     .ConfigurePrimaryHttpMessageHandler(() =>
@@ -62,6 +63,7 @@ namespace synosscamera.station.DependencyInjection
 
         private static IServiceCollection AddApis(this IServiceCollection services)
         {
+
             services.AddScoped<IStationApiUtil, DefaultStationApiUtil>();
 
             services.AddScoped<ApiInfo>();
