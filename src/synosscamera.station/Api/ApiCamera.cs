@@ -35,7 +35,12 @@ namespace synosscamera.station.Api
         /// <summary>
         /// Api name
         /// </summary>
-        public override string ApiName => "SYNO.SurveillanceStation.Camera";
+        public override string ApiName => StationConstants.Api.ApiCamera.Name;
+
+        /// <inheritdoc/>
+        protected override void BuildApiErrorCodeMappings()
+        {
+        }
 
         /// <summary>
         /// Get camera list from station
@@ -50,7 +55,7 @@ namespace synosscamera.station.Api
                 return resp;
             }
 
-            var query = await GetUrl("List", version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
+            var query = await GetUrl(StationConstants.Api.ApiCamera.Methods.List, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "limit", 100 }
             }, cancellation: cancellation);

@@ -15,47 +15,7 @@
             /// </summary>
             public const string TokenHeaderName = "X-SYNO-TOKEN";
         }
-        /// <summary>
-        /// Api names
-        /// </summary>
-        public static class ApiName
-        {
 
-
-
-            /// <summary>
-            /// Retrieve Surveillance Station-related general information
-            /// </summary>
-            public const string StationInfo = "SYNO.SurveillanceStation.Info";
-            /// <summary>
-            /// Retrieve camera-related information
-            /// </summary>
-            public const string StationCamera = "SYNO.SurveillanceStation.Camera";
-            /// <summary>
-            /// Perform camera PTZ actions
-            /// </summary>
-            public const string StationPTZ = "SYNO.SurveillanceStation.PTZ";
-            /// <summary>
-            /// Control external recording of cameras
-            /// </summary>
-            public const string StationExternalRecording = "SYNO.SurveillanceStation.ExternalRecording";
-            /// <summary>
-            /// Query recording information
-            /// </summary>
-            public const string StationRecording = "SYNO.SurveillanceStation.Recording";
-            /// <summary>
-            /// Get information of defined E-Maps.
-            /// </summary>
-            public const string StationEmap = "SYNO.SurveillanceStation.Emap";
-            /// <summary>
-            /// Get Image of defined E-Maps.
-            /// </summary>
-            public const string StationEmapImage = "SYNO.SurveillanceStation.Emap.Image";
-            /// <summary>
-            /// Get authorized token of DS.
-            /// </summary>
-            public const string StationNotifications = "SYNO.SurveillanceStation.Notifications";
-        }
 
         /// <summary>
         /// Station API data
@@ -94,12 +54,12 @@
             /// <summary>
             /// Api Info
             /// </summary>
-            public static class ApiAuto
+            public static class ApiAuth
             {
                 /// <summary>
                 /// Perform session login and logout
                 /// </summary>
-                public const string Auth = "SYNO.API.Auth";
+                public const string Name = "SYNO.API.Auth";
 
                 /// <summary>
                 /// Methods of api
@@ -133,7 +93,7 @@
                     /// <summary>
                     /// Guest or disabled account.
                     /// </summary>
-                    public const int GGuestOrDisabledAccount = 401;
+                    public const int GuestOrDisabledAccount = 401;
                     /// <summary>
                     /// Permission denied.
                     /// </summary>
@@ -174,6 +134,35 @@
                     /// Account Locked (when account max try exceed).
                     /// </summary>
                     public const int AccountLocked = 411;
+                }
+            }
+
+            /// <summary>
+            /// Api Info
+            /// </summary>
+            public static class ApiCamera
+            {
+                /// <summary>
+                /// Perform session login and logout
+                /// </summary>
+                public const string Name = "SYNO.SurveillanceStation.Camera";
+
+                /// <summary>
+                /// Methods of api
+                /// </summary>
+                public static class Methods
+                {
+                    /// <summary>
+                    /// List available cameras
+                    /// </summary>
+                    public const string List = "List";
+                }
+
+                /// <summary>
+                /// Api specific error codes
+                /// </summary>
+                public static class ErrorCodes
+                {
                 }
             }
         }

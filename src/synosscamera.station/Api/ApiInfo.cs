@@ -34,7 +34,12 @@ namespace synosscamera.station.Api
         /// <summary>
         /// Api name
         /// </summary>
-        public override string ApiName => "SYNO.API.Info";
+        public override string ApiName => StationConstants.Api.ApiInfo.Name;
+
+        /// <inheritdoc/>
+        protected override void BuildApiErrorCodeMappings()
+        {
+        }
 
         /// <summary>
         /// Get API list from station
@@ -50,7 +55,7 @@ namespace synosscamera.station.Api
                 return resp;
             }
 
-            var query = await GetUrl("Query", parameter: new System.Collections.Generic.Dictionary<string, object>()
+            var query = await GetUrl(StationConstants.Api.ApiInfo.Methods.Query, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "query", queryApiFilter }
             }, cancellation: cancellation);
@@ -66,7 +71,13 @@ namespace synosscamera.station.Api
             else
             {
                 Logger.LogDebug("Error loading API list form station with code '{errorCode}'.", response.Error?.Code ?? -1);
-                // trhow error
+                var ex = Client.LastError as StationApiException;
+                if (ex == null)
+                    ex = new StationApiException("Error loading API list from station");
+
+                var errorInfo = ErrorResponseFromStationError(response.Error);
+                ex.ErrorResponse = errorInfo.error;
+                ex.UpdateStatusCode(errorInfo.statusCode);
             }
 
             return response;

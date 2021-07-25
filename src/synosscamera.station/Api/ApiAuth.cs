@@ -27,7 +27,25 @@ namespace synosscamera.station.Api
         /// <summary>
         /// Api name
         /// </summary>
-        public override string ApiName => "SYNO.API.Auth";
+        public override string ApiName => StationConstants.Api.ApiAuth.Name;
+
+        /// <inheritdoc/>
+        protected override void BuildApiErrorCodeMappings()
+        {
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.AccountNotSpecified] = "The account parameter is not specified.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.InvalidPassword] = "Invalid password.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.GuestOrDisabledAccount] = "Guest or disabled account.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.PermissionDeined] = "Permission denied.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.OneTimePasswordNotSpecified] = "One time password not specified.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.OneTimePasswordAuthFailed] = "One time password authenticate failed.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.AppPortalIncorrect] = "App portal incorrect.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.OTPCodeEnforced] = "OTP code enforced.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.MaxTriesReached] = "Max Tries (if auto blocking is set to true).";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.PasswordExpiredCannotChange] = "Password Expired Can not Change.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.PasswordExpired] = "Password Expired.";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.PasswordMustBeChanged] = "Account Locked(when account max try exceed).";
+            ErrorCodeMappings[StationConstants.Api.ApiAuth.ErrorCodes.AccountLocked] = "The account parameter is not specified.";
+        }
 
         /// <summary>
         /// Login to station using configured credentials
@@ -36,7 +54,7 @@ namespace synosscamera.station.Api
         /// <returns></returns>
         public async Task<ApiAuthLoginResponse> LoginAsync(CancellationToken cancellationToken = default)
         {
-            var query = await GetUrl("login", version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
+            var query = await GetUrl(StationConstants.Api.ApiAuth.Methods.Login, version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "account",  Settings.Username },
                 { "passwd",  Settings.Password },
@@ -70,7 +88,7 @@ namespace synosscamera.station.Api
         /// <returns></returns>
         public async Task<ApiAuthLogoutResponse> LogoutAsync(CancellationToken cancellationToken = default)
         {
-            var query = await GetUrl("logout", version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
+            var query = await GetUrl(StationConstants.Api.ApiAuth.Methods.Logout, version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "session",  Settings.SessionNameForStation }
             }, cancellation: cancellationToken);

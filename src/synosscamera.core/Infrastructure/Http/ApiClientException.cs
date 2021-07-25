@@ -3,11 +3,8 @@ using synosscamera.core.Diagnostics;
 using synosscamera.core.Extensions;
 using synosscamera.core.Model.Dto;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace synosscamera.core.Infrastructure.Http
@@ -28,7 +25,7 @@ namespace synosscamera.core.Infrastructure.Http
         /// <summary>
         /// response status code
         /// </summary>
-        public HttpStatusCode ResponseStatus { get; private set; }
+        public HttpStatusCode ResponseStatus { get; protected set; }
         /// <summary>
         /// If an error occured, the API client will try to produce a meaningful
         /// ApiErrorResponse object for returning data to the clients.
@@ -71,18 +68,7 @@ namespace synosscamera.core.Infrastructure.Http
             ReasonPhrase = reason;
             ResponseContent = content;
             ResponseStatus = status;
-
-            if (content.IsPresent())
-            {
-                try
-                {
-                    ErrorResponse = JsonConvert.DeserializeObject<ApiErrorResponse>(content);
-                }
-                catch
-                {
-
-                }
-            }
+            ErrorResponse = ApiErrorResponseFromContent(content);
         }
 
         /// <summary>
@@ -98,19 +84,7 @@ namespace synosscamera.core.Infrastructure.Http
             ReasonPhrase = reason;
             ResponseContent = content;
             ResponseStatus = status;
-
-            if (content.IsPresent())
-            {
-                try
-                {
-                    ErrorResponse = JsonConvert.DeserializeObject<ApiErrorResponse>(content);
-                }
-                catch
-                {
-
-                }
-            }
-
+            ErrorResponse = ApiErrorResponseFromContent(content);
         }
 
         /// <summary>
@@ -129,6 +103,23 @@ namespace synosscamera.core.Infrastructure.Http
                 content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             return new ApiClientException(message, response.ReasonPhrase, content, response.StatusCode);
+        }
+
+        protected virtual ApiErrorResponse ApiErrorResponseFromContent(string content)
+        {
+            if (content.IsPresent())
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<ApiErrorResponse>(content);
+                }
+                catch
+                {
+
+                }
+            }
+
+            return null;
         }
     }
 }

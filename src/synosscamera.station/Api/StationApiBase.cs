@@ -4,11 +4,14 @@ using synosscamera.core.Abstractions;
 using synosscamera.core.Diagnostics;
 using synosscamera.core.Extensions;
 using synosscamera.core.Infrastructure.Http;
+using synosscamera.core.Model.Dto;
 using synosscamera.station.Abstractions;
 using synosscamera.station.Configuration;
 using synosscamera.station.Infrastructure;
+using synosscamera.station.Model;
 using synosscamera.station.Model.ApiInfo;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +27,7 @@ namespace synosscamera.station.Api
         private readonly SurveillanceStationClient _client;
         private readonly ILogger _logger;
         private Dictionary<string, ApiDetails> _apiList;
+        private readonly Dictionary<int, string> _apiErrorResolval = new Dictionary<int, string>();
 
         /// <summary>
         /// Constructor of the class
@@ -42,6 +46,8 @@ namespace synosscamera.station.Api
             _cache = memoryCache;
             _settings = settings?.Value ?? new SurveillanceStationSettings();
             _logger = loggerFactory.CreateLogger(this.GetType().FullName);
+
+            BuildCommonApiErrorCodeMappings();
         }
         /// <summary>
         /// Gets the surveillance station web api client
@@ -65,6 +71,29 @@ namespace synosscamera.station.Api
         public abstract string ApiName { get; }
         /// <inheritdoc/>
         public string SynoToken { get => Client.SynoToken; set => Client.SynoToken = value; }
+        /// <summary>
+        /// Error code to message mappings
+        /// </summary>
+        protected Dictionary<int, string> ErrorCodeMappings => _apiErrorResolval;
+
+        private void BuildCommonApiErrorCodeMappings()
+        {
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.UnknownError] = "Unknown error occured.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.InvalidParameters] = "Invalid parameter and/or value supplied.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.ApiDoesNotExist] = "The requested api does not exist.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.MethodDoesNotExist] = "The called method does not exist.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.ApiVersionNotSupported] = "This version of the api is not supported.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.InsufficientUserPriviliges] = "User has insufficient priviliges.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.ConnectionTimeout] = "Connection timed out.";
+            _apiErrorResolval[StationConstants.ErrorCodes.Common.MultipleLoginDetected] = "Multiple logins of this user detected.";
+
+            BuildApiErrorCodeMappings();
+        }
+
+        /// <summary>
+        /// Build error code to text mappings
+        /// </summary>
+        protected abstract void BuildApiErrorCodeMappings();
 
         /// <summary>
         /// Get the api call query string
@@ -123,6 +152,40 @@ namespace synosscamera.station.Api
         void IStationApi.SetApiList(Dictionary<string, ApiDetails> apiList)
         {
             _apiList = apiList;
+        }
+        /// <summary>
+        /// Form ApiErrorResponse from station error
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        protected (ApiErrorResponse error, HttpStatusCode statusCode) ErrorResponseFromStationError(StationError error)
+        {
+            var ret = new ApiErrorResponse();
+            var apiError = new ApiError();
+            var statusCode = HttpStatusCode.InternalServerError;
+
+            ret.IsApiError = false;
+            ret.Errors = new ApiError[] { apiError };
+
+            apiError.ErrorCode = "undefined";
+            apiError.ErrorMessage = "Undefined";
+
+            if (error != null)
+            {
+                var message = "";
+                ErrorCodeMappings.TryGetValue(error.Code, out message);
+
+                apiError.ExternalErrorMessage = message;
+                apiError.ExternalErrorCode = error.Code.ToString();
+
+                // TODO: mao code to internal errors and adjust HttpStatus
+                apiError.ErrorMessage = message;
+                apiError.ErrorCode = error.Code.ToString();
+                apiError.ErrorSource = "SurveillanceStation";
+                apiError.ErrorType = ApiErrorTypes.ExternalRestApi;
+            }
+
+            return (ret, statusCode);
         }
     }
 }
