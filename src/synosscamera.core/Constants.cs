@@ -67,6 +67,15 @@
                 /// Api key auth cache key
                 /// </summary>
                 public const string ApiKeyAuthenticationCacheKey = "ApiKeyAuthenticationCache";
+
+                /// <summary>
+                /// Cache key string the resolved list of api's
+                /// </summary>
+                public const string StationApiListCache = "StationApiListCache";
+                /// <summary>
+                /// Cache key string the resolved list of cameras
+                /// </summary>
+                public const string StationCameraListCache = "StationCameraListCache";
             }
         }
     }

@@ -4,6 +4,7 @@ using Polly;
 using Polly.Extensions.Http;
 using synosscamera.core.Diagnostics;
 using synosscamera.core.Infrastructure.Http;
+using synosscamera.station.Abstractions;
 using synosscamera.station.Api;
 using synosscamera.station.Configuration;
 using synosscamera.station.Infrastructure;
@@ -61,7 +62,17 @@ namespace synosscamera.station.DependencyInjection
 
         private static IServiceCollection AddApis(this IServiceCollection services)
         {
+            services.AddScoped<IStationApiUtil, DefaultStationApiUtil>();
+
             services.AddScoped<ApiInfo>();
+            services.AddScoped<ApiAuth>();
+            services.AddScoped<ApiCamera>();
+
+            // add apis with interface also - this is for util to update/sync tokens
+            services.AddScoped<IStationApi, ApiInfo>();
+            services.AddScoped<IStationApi, ApiAuth>();
+            services.AddScoped<IStationApi, ApiCamera>();
+
             return services;
         }
 
