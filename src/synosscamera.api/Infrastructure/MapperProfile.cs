@@ -26,6 +26,10 @@ namespace synosscamera.api.Infrastructure
         {
             CreateMap<CameraInfo, CameraDetails>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)src.Status));
+            CreateMap<CameraSpecialInfo, CameraDetailsSpecialized>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)src.Status))
+                .ForMember(dest => dest.RecordingStatus, opt => opt.MapFrom(src => (int)src.RecordingStatus))
+                .ForMember(dest => dest.Ip, opt => opt.MapFrom(src => src.Host));
         }
     }
 }
