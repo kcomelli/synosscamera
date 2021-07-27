@@ -143,7 +143,7 @@
             public static class ApiCamera
             {
                 /// <summary>
-                /// Perform session login and logout
+                /// Get and set camera infos
                 /// </summary>
                 public const string Name = "SYNO.SurveillanceStation.Camera";
 
@@ -167,6 +167,62 @@
                 /// </summary>
                 public static class ErrorCodes
                 {
+                }
+            }
+
+            /// <summary>
+            /// Api external recording
+            /// </summary>
+            public static class ApiExternalRecording
+            {
+                /// <summary>
+                /// Control external recording
+                /// </summary>
+                public const string Name = "SYNO.SurveillanceStation.ExternalRecording";
+
+                /// <summary>
+                /// Methods of api
+                /// </summary>
+                public static class Methods
+                {
+                    /// <summary>
+                    /// recording
+                    /// </summary>
+                    public const string Record = "Record";
+                }
+
+                /// <summary>
+                /// Actions of api
+                /// </summary>
+                public static class Actions
+                {
+                    /// <summary>
+                    /// Start recording
+                    /// </summary>
+                    public const string Start = "start";
+                    /// <summary>
+                    /// Stop recording
+                    /// </summary>
+                    public const string Stop = "stop";
+                }
+
+                /// <summary>
+                /// Api specific error codes
+                /// </summary>
+                public static class ErrorCodes
+                {
+                    /// <summary>
+                    /// Execution failed.
+                    /// </summary>
+                    public const int ExecutionFailed = 400;
+                    /// <summary>
+                    /// Parameter invalid.
+                    /// </summary>
+                    public const int ParameterInvalid = 401;
+                    /// <summary>
+                    /// Camera disabled.
+                    /// </summary>
+                    public const int CameraDisabled = 402;
                 }
             }
         }

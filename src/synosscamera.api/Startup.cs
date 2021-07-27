@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using synosscamera.api.Infrastructure.Authentication;
@@ -125,7 +126,8 @@ namespace synosscamera.api
 
             services.AddOptions();
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddAuthentication(o =>
             {
@@ -162,7 +164,8 @@ namespace synosscamera.api
                 GetXmlCommentsPath().ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
                 c.OperationFilter<AddApiKeyAuthorizationHeaderParameter>();
                 c.ParameterFilter<QueryArrayParamFilter>();
-            });
+            })
+            .AddSwaggerGenNewtonsoftSupport(); ;
 
             //Setup CORS
             services.AddCors(options =>
