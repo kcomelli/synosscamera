@@ -3,7 +3,7 @@
     /// <summary>
     /// Station API response object
     /// </summary>
-    public abstract class StationResponseBase
+    public class StationResponseBase
     {
         /// <summary>
         /// Indicates success
