@@ -88,5 +88,49 @@ namespace synosscamera.station.Api
 
             return null;
         }
+
+        /// <summary>
+        /// Get camera infos from station
+        /// </summary>
+        /// <param name="cameraId">Camer id</param>
+        /// <param name="cancellation">Cancellation token</param>
+        /// <returns>Api response from station</returns>
+        public async Task<ApiCameraGetInfoResponse> GetCameraInfoAsync(int cameraId, CancellationToken cancellation = default)
+        {
+
+            if (await VerifyLoggedIn(cancellation))
+            {
+
+                var query = await GetUrl(StationConstants.Api.ApiCamera.Methods.GetInfo, version: 8, parameter: new System.Collections.Generic.Dictionary<string, object>()
+                {
+                    { "basic", true },
+                    { "cameraIds", cameraId },
+                    { "optimize", true }
+                }, cancellation: cancellation);
+
+                var response = await Client.CallGetApiAsync<ApiCameraGetInfoResponse>(query.action, query.query, token: cancellation);
+
+                if (response?.Success == true)
+                {
+                    Logger.LogDebug("Retrieved camera info form station.");
+                    return response;
+                }
+                else
+                {
+                    Logger.LogDebug("Error loading camera info form station with code '{errorCode}'.", response.Error?.Code ?? -1);
+                    var ex = Client.LastError as StationApiException;
+                    if (ex == null)
+                        ex = new StationApiException("Error loading camera info from station");
+
+                    var errorInfo = ErrorResponseFromStationError(response.Error);
+                    ex.ErrorResponse = errorInfo.error;
+                    ex.UpdateStatusCode(errorInfo.statusCode);
+
+                    throw ex;
+                }
+            }
+
+            return null;
+        }
     }
 }

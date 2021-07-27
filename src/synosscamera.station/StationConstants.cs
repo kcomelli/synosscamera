@@ -156,6 +156,10 @@
                     /// List available cameras
                     /// </summary>
                     public const string List = "List";
+                    /// <summary>
+                    /// Get info
+                    /// </summary>
+                    public const string GetInfo = "GetInfo";
                 }
 
                 /// <summary>
