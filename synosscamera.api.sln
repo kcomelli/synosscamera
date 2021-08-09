@@ -27,9 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.redis", "src\s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.station", "src\synosscamera.station\synosscamera.station.csproj", "{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "synosscamera.core.Tests", "tests\synosscamera.core.Tests\synosscamera.core.Tests.csproj", "{B99EFA34-1133-42C6-B407-3CB36B8B7154}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.core.Tests", "tests\synosscamera.core.Tests\synosscamera.core.Tests.csproj", "{B99EFA34-1133-42C6-B407-3CB36B8B7154}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "synosscamera.testsuite", "src\synosscamera.testsuite\synosscamera.testsuite.csproj", "{0FE118D3-AF6A-4C21-80BE-4460CCA0390A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "synosscamera.testsuite", "src\synosscamera.testsuite\synosscamera.testsuite.csproj", "{0FE118D3-AF6A-4C21-80BE-4460CCA0390A}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7686906-C11A-449D-857C-894C2ECDFCB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{0FE118D3-AF6A-4C21-80BE-4460CCA0390A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FE118D3-AF6A-4C21-80BE-4460CCA0390A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FE118D3-AF6A-4C21-80BE-4460CCA0390A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7686906-C11A-449D-857C-894C2ECDFCB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7686906-C11A-449D-857C-894C2ECDFCB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7686906-C11A-449D-857C-894C2ECDFCB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7686906-C11A-449D-857C-894C2ECDFCB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{89F4A4CA-2E58-45A5-B90D-0F47E4B520C1} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
 		{B99EFA34-1133-42C6-B407-3CB36B8B7154} = {F1262BF7-EDA1-4BA0-A627-E59C9C44F973}
 		{0FE118D3-AF6A-4C21-80BE-4460CCA0390A} = {54AE98EE-9548-4F33-BE64-0D46A416BCAE}
+		{D7686906-C11A-449D-857C-894C2ECDFCB4} = {890B0013-678C-445B-B9B3-704830B284DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {460C816D-BCDE-4BA7-9145-0CAED8724409}

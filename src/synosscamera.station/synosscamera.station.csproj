@@ -6,8 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Model\" />
-      <Folder Include="DependencyInjection\" />
+      <ProjectReference Include="..\synosscamera.core\synosscamera.core.csproj" />
+      <ProjectReference Include="..\synosscamera.prometheus\synosscamera.prometheus.csproj" />
+      <ProjectReference Include="..\synosscamera.redis\synosscamera.redis.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  synosscamera.api:
+    image: ${DOCKER_REGISTRY-}synosscameraapi
+    build:
+      context: .
+      dockerfile: src/synosscamera.api/Dockerfile

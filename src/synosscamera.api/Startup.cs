@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using synosscamera.api.Infrastructure.Authentication;
@@ -16,6 +18,7 @@ using synosscamera.api.Infrastructure.Swagger;
 using synosscamera.core;
 using synosscamera.core.DependencyInjection;
 using synosscamera.core.Extensions;
+using synosscamera.station.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -123,7 +126,8 @@ namespace synosscamera.api
 
             services.AddOptions();
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddAuthentication(o =>
             {
@@ -140,6 +144,7 @@ namespace synosscamera.api
             });
 
             services.AddsynossCameraDefaults(Configuration);
+            services.AddSurveillanceStationApis(Configuration);
 
             services.AddAuthorization();
 
@@ -159,7 +164,8 @@ namespace synosscamera.api
                 GetXmlCommentsPath().ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
                 c.OperationFilter<AddApiKeyAuthorizationHeaderParameter>();
                 c.ParameterFilter<QueryArrayParamFilter>();
-            });
+            })
+            .AddSwaggerGenNewtonsoftSupport(); ;
 
             //Setup CORS
             services.AddCors(options =>
@@ -172,6 +178,9 @@ namespace synosscamera.api
                                       builder.AllowAnyHeader();
                                   });
             });
+
+            // add IMapper injection possibilities
+            services.AddAutoMapper(TypeCacheUtility.GetInheritedTypes<Profile>().ToArray());
         }
 
         private List<string> GetXmlCommentsPath()
