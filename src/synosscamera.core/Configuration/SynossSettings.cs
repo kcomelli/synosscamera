@@ -20,6 +20,14 @@ namespace synosscamera.core.Configuration
                 {
                     Constants.Cache.SettingKeys.ApiKeyAuthenticationCacheKey,
                     new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Minutes, AbsoluteExpiration = 6, SlidingExpiration = 2 }
+                },
+                {
+                    Constants.Cache.SettingKeys.StationApiListCache,
+                    new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Hours, AbsoluteExpiration = 24, SlidingExpiration = 6 }
+                },
+                {
+                    Constants.Cache.SettingKeys.StationCameraListCache,
+                    new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Minutes, AbsoluteExpiration = 5 }
                 }
             };
         }

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,7 +29,8 @@ namespace synosscamera.api
         {
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .ConfigureAppConfiguration((hostingContext, config) => {
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
                     // clear default config
                     config.Sources.Clear();
 
@@ -68,8 +69,12 @@ namespace synosscamera.api
                     // overwrite settings via arguments
                     if (args != null)
                         config.AddCommandLine(args);
+
+                    if (hostingContext.HostingEnvironment.IsDevelopment())
+                    {
+                        config.AddUserSecrets<Program>();
+                    }
                 })
-                .UseSerilog()
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
