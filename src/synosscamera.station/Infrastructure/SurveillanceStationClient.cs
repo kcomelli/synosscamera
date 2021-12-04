@@ -13,7 +13,7 @@ namespace synosscamera.station.Infrastructure
     /// <summary>
     /// Http client for surveillance station web api
     /// </summary>
-    public class SurveillanceStationClient : RestApiClientBase
+    public class SurveillanceStationClient : UrlFormDataApiClient
     {
         private readonly SurveillanceStationSettings _settings;
         /// <summary>

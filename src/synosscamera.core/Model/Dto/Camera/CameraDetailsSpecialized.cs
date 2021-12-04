@@ -58,5 +58,9 @@ namespace synosscamera.core.Model.Dto.Camera
         /// Is video mirrored
         /// </summary>
         public bool VideoMirror { get; set; }
+        /// <summary>
+        /// Detail infos
+        /// </summary>
+        public CameraDetailInfo DetailInfo { get; set; }
     }
 }

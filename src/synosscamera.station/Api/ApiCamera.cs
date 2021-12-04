@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using synosscamera.core;
 using synosscamera.core.Abstractions;
 using synosscamera.core.Extensions;
 using synosscamera.station.Abstractions;
 using synosscamera.station.Configuration;
 using synosscamera.station.Infrastructure;
+using synosscamera.station.Internals;
 using synosscamera.station.Model.ApiInfo;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -73,7 +76,7 @@ namespace synosscamera.station.Api
                 }
                 else
                 {
-                    Logger.LogDebug("Error loading camera list form station with code '{errorCode}'.", response.Error?.Code ?? -1);
+                    Logger.LogDebug("Error loading camera list form station with code '{errorCode}'.", response?.Error?.Code ?? -1);
                     var ex = Client.LastError as StationApiException;
                     if (ex == null)
                         ex = new StationApiException("Error loading camera list from station");
@@ -105,7 +108,8 @@ namespace synosscamera.station.Api
                 {
                     { "basic", true },
                     { "cameraIds", cameraId },
-                    { "optimize", true }
+                    { "optimize", true },
+                    { "camAppInfo", true },
                 }, cancellation: cancellation);
 
                 var response = await Client.CallGetApiAsync<ApiCameraGetInfoResponse>(query.action, query.query, token: cancellation);
@@ -117,12 +121,84 @@ namespace synosscamera.station.Api
                 }
                 else
                 {
-                    Logger.LogDebug("Error loading camera info form station with code '{errorCode}'.", response.Error?.Code ?? -1);
+                    Logger.LogDebug("Error loading camera info form station with code '{errorCode}'.", response?.Error?.Code ?? -1);
                     var ex = Client.LastError as StationApiException;
                     if (ex == null)
                         ex = new StationApiException("Error loading camera info from station");
 
                     var errorInfo = ErrorResponseFromStationError(response.Error);
+                    ex.ErrorResponse = errorInfo.error;
+                    ex.UpdateStatusCode(errorInfo.statusCode);
+
+                    throw ex;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Update the schedule
+        /// </summary>
+        /// <param name="cameraId"></param>
+        /// <param name="schedule"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        public async Task<ApiCameraSaveResponse> ChangeSchedule(int cameraId, RecordSchedule schedule, DateTime? from = null, DateTime? to = null, CancellationToken cancellation = default)
+        {
+            if (await VerifyLoggedIn(cancellation))
+            {
+                #region Tests
+                //var query = await GetFormData(StationConstants.Api.ApiCamera.Methods.Save, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
+                //{
+                //    { "camId", cameraId },
+                //    { "id", cameraId },
+                //    { "data", new System.Collections.Generic.Dictionary<string, object>() { { "recordSchedule", ApiUtilities.RecordingScheduleToString(ApiUtilities.CreateRecordingSchedule(schedule, from, to, null)) }}
+                //} });
+
+                //var data = new System.Collections.Generic.Dictionary<string, object>()
+                //{
+                //    { "camId", cameraId },
+                //    { "api", "SYNO.SurveillanceStation.Camera.Wizard" },
+                //    { "method", "CamSaveAll" },
+                //    { "version", 2 },
+                //    { "actFormHost", false },
+                //    { "data", JsonConvert.SerializeObject(new System.Collections.Generic.Dictionary<string, object>()
+                //                                            {
+                //                                                { "camId", cameraId },
+                //                                                { "recordSchedule", ApiUtilities.RecordingScheduleToString(ApiUtilities.CreateRecordingSchedule(schedule, from, to, null)) }
+                //                                            })
+                //    }
+                //};
+
+                //var response = await Client.CallPostApiAsync<ApiCameraSaveResponse>(query.action, data, token: cancellation);
+                #endregion
+
+                var query = await GetFormData(StationConstants.Api.ApiCamera.Methods.Save, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
+                {
+                    { "id", cameraId },
+                    // sending a string without a character don't work - don't know why
+                    // maybe bug in synos API
+                    { "recordSchedule", ApiUtilities.RecordingScheduleToString(ApiUtilities.CreateRecordingSchedule(schedule, from, to, null)).Insert(9,",") }
+                }, cancellation: cancellation);
+
+                var response = await Client.CallPostApiAsync<ApiCameraSaveResponse>(query.action, query.formdata, token: cancellation);
+
+                if (response?.Success == true)
+                {
+                    Logger.LogDebug("Sucessfully changed schedule.");
+                    return response;
+                }
+                else
+                {
+                    Logger.LogDebug("Error changing recording schedule of station camera with code '{errorCode}'.", response?.Error?.Code ?? -1);
+                    var ex = Client.LastError as StationApiException;
+                    if (ex == null)
+                        ex = new StationApiException("Error changing recording schedule of station camera");
+
+                    var errorInfo = ErrorResponseFromStationError(response?.Error);
                     ex.ErrorResponse = errorInfo.error;
                     ex.UpdateStatusCode(errorInfo.statusCode);
 

@@ -9,7 +9,9 @@ using synosscamera.core.Model.Dto;
 using synosscamera.core.Model.Dto.Camera;
 using synosscamera.station.Api;
 using synosscamera.station.Infrastructure;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -172,7 +174,7 @@ namespace synosscamera.api.Controllers
         /// </summary>
         /// <remarks> 
         /// <para>
-        /// <code>GET api/camera/{id}/recording/start</code>
+        /// <code>POST api/camera/{id}/recording/start</code>
         /// </para>
         /// <para>
         /// Your connection to surveillance station must be completed at server level in order to connect sucessfully!<br/>
@@ -224,7 +226,7 @@ namespace synosscamera.api.Controllers
         /// </summary>
         /// <remarks> 
         /// <para>
-        /// <code>GET api/camera/{id}/recording/stop</code>
+        /// <code>POST api/camera/{id}/recording/stop</code>
         /// </para>
         /// <para>
         /// Your connection to surveillance station must be completed at server level in order to connect sucessfully!<br/>
@@ -270,5 +272,66 @@ namespace synosscamera.api.Controllers
                 return StatusCode((int)sex.ResponseStatus, sex.ErrorResponse);
             }
         }
+
+        /// <summary>
+        /// Change the recording schedule of the given camera id
+        /// </summary>
+        /// <remarks> 
+        /// <para>
+        /// <code>POST api/camera/{id}/recording/schedule</code>
+        /// </para>
+        /// <para>
+        /// Your connection to surveillance station must be completed at server level in order to connect sucessfully!<br/>
+        /// You can use the <code>api/camera/{id}</code> endpoint to get current state of recording!
+        /// </para>
+        /// <br/>
+        /// <b>NOTE: Date from and to currently not implemented!</b>
+        /// </remarks>
+        /// <param name="id">Id of the camera which should be changed.</param>
+        /// <param name="recordingMode">The recoding mode to set (0 ... Off, 1 ... Continuous, 2 ... MotionDetection)</param>
+        /// <param name="from">Date and time (week day and time is important) for start.</param>
+        /// <param name="to">Date and time (week day and time is important) for stop.</param>
+        /// <returns>If successful, returns the information of execution success.</returns>
+        /// <response code="200">Response object containing the state of execution.</response>    
+        /// <response code="401">Authentication is required in order to change the camera.</response>
+        /// <response code="403">The current authenticated client or user does not have permissions to change the camera.</response>
+        /// <response code="408">The connection to surveillance station or a camera timed out. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="429">Max tries reached at Surveillance API level. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="500">If a general error occured. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="501">A called API, used method or version is not available at the SurveillanceStation. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="503">May occure if a limitation is reached. Retry the request later. An ApiErrorResponse result will be sent within the response body.</response>
+        [HttpPost("{id}/recording/schedule")]
+        [ProducesResponseType(typeof(SuccessResponse), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 403)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 408)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 429)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 500)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 501)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 503)]
+        public async Task<IActionResult> Schedule(int id, 
+            [FromQuery][Required] RecordSchedule recordingMode, 
+            [FromQuery] DateTime? from = null, 
+            [FromQuery] DateTime? to = null)
+        {
+            try
+            {
+                var resp = await _apiCamera.ChangeSchedule(id, recordingMode, from, to, HttpContext.RequestAborted);
+
+                var ret = new SuccessResponse();
+                ret.Success = resp.Success;
+
+                return Ok(ret);
+            }
+            catch (StationApiException sex)
+            {
+                return StatusCode((int)sex.ResponseStatus, sex.ErrorResponse);
+            }
+            catch (ApiClientException sex)
+            {
+                return StatusCode((int)sex.ResponseStatus, sex.ErrorResponse);
+            }
+        }
+
     }
 }
