@@ -126,6 +126,39 @@ namespace synosscamera.station.Api
 
             return (uriAction, RestApiClientBase.CreateQueryString(parameter));
         }
+
+        /// <summary>
+        /// Get the api call form data
+        /// </summary>
+        /// <param name="method">Method to call</param>
+        /// <param name="action">Action to call if any</param>
+        /// <param name="version">Version to use</param>
+        /// <param name="parameter">Additional parameters for querystring</param>
+        /// <param name="cancellation">Cancellation token</param>
+        /// <returns>A relative url including the api path</returns>
+        protected async Task<(string action, Dictionary<string, object> formdata)> GetFormData(string method, string action = null, int version = 1, Dictionary<string, object> parameter = null, CancellationToken cancellation = default)
+        {
+            var path = await ResolvePathForApi(cancellation);
+            var versions = await ResolveVersionsForApi(cancellation);
+
+            if (parameter == null)
+                parameter = new Dictionary<string, object>();
+
+            var uriAction = string.Empty.AppendEndpoint(path);
+
+            parameter["api"] = ApiName;
+            parameter["method"] = method;
+            if (action.IsPresent())
+                parameter["action"] = action;
+
+            parameter["version"] = version;
+
+            if (_settings.SessionNameForStation.IsPresent())
+                parameter["session"] = _settings.SessionNameForStation;
+
+            return (uriAction, parameter);
+        }
+
         /// <summary>
         /// Resolve the api path using the api name
         /// </summary>

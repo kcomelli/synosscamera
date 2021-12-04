@@ -32,7 +32,7 @@ namespace synosscamera.core.Infrastructure.Http
         /// <param name="clientFactory"></param>
         /// <param name="loggerFactory">Logger factory for creating loggers</param>
         /// <param name="cache">Local memory cache</param>
-        public RestApiClientBase(IHttpClientFactory clientFactory, ILoggerFactory loggerFactory, IMemoryCacheWrapper cache)
+        protected RestApiClientBase(IHttpClientFactory clientFactory, ILoggerFactory loggerFactory, IMemoryCacheWrapper cache)
         {
             clientFactory.CheckArgumentNull(nameof(clientFactory));
             loggerFactory.CheckArgumentNull(nameof(loggerFactory));
@@ -91,17 +91,24 @@ namespace synosscamera.core.Infrastructure.Http
         /// <returns></returns>
         public static string CreateQueryString(Dictionary<string, object> parameter)
         {
-            string ret = "";
+            StringBuilder ret = new StringBuilder(500);
 
             foreach (var key in parameter.Keys)
             {
-                if (ret.IsPresent())
-                    ret += "&";
+                if (ret.Length > 0)
+                    ret.Append("&");
 
-                ret += $"{key}={(parameter[key] == null ? "" : WebUtility.UrlEncode(Convert.ToString(parameter[key])))}";
+                if (parameter[key] != null && !parameter[key].GetType().IsValueType && !(parameter[key] is string))
+                {
+                    ret.Append($"{key}={(parameter[key] == null ? "" : WebUtility.UrlEncode(JsonConvert.SerializeObject(parameter[key])))}");
+                }
+                else
+                {
+                    ret.Append($"{key}={(parameter[key] == null ? "" : WebUtility.UrlEncode(Convert.ToString(parameter[key])))}");
+                }
             }
 
-            return ret;
+            return ret.ToString();
         }
         /// <summary>
         /// Override this method to create a logger for the concrete class implementation
@@ -176,7 +183,7 @@ namespace synosscamera.core.Infrastructure.Http
                 await PopulateOptionsToClientHeaders(client, state, token).ConfigureAwait(false);
                 var dtStart = DateTime.UtcNow;
                 RequestSending(HttpMethod.Post, client, apiAction, ToJson(data));
-                var content = GetJsonContent(data);
+                var content = GetContent(data);
 
                 token.ThrowIfCancellationRequested();
 
@@ -234,7 +241,7 @@ namespace synosscamera.core.Infrastructure.Http
                 await PopulateOptionsToClientHeaders(client, state, token).ConfigureAwait(false);
                 var dtStart = DateTime.UtcNow;
                 RequestSending(HttpMethod.Put, client, apiAction, ToJson(data));
-                var content = GetJsonContent(data);
+                var content = GetContent(data);
 
                 var request = CreateRequestMessage(HttpMethod.Put, CreateUri(targetRequestUri));
                 request.Content = content;
@@ -491,29 +498,24 @@ namespace synosscamera.core.Infrastructure.Http
 
         }
 
-
-
         /// <summary>
-        /// Convert an object to json data
+        /// Get <see cref="HttpContent"/> based on data depending on the client type (e.g. json, formdata, etc).
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected HttpContent GetJsonContent(object data)
-        {
-            if (data == null)
-                return new StringContent(string.Empty, Encoding.UTF8, "application/json");
+        protected abstract HttpContent GetContent(object data);
 
-            return new StringContent(JsonConvert.SerializeObject(data, JsonSerializerSettings), Encoding.UTF8, "application/json");
-        }
-
-        private string ToJson(object data)
+        /// <summary>
+        /// Convert data object to json string
+        /// </summary>
+        /// <param name="data"></param>
+        protected string ToJson(object data)
         {
             if (data == null)
                 return string.Empty;
 
             return JsonConvert.SerializeObject(data, data.GetType(), JsonSerializerSettings);
         }
-
 
         /// <summary>
         /// Verify if all options are set for a call to the api

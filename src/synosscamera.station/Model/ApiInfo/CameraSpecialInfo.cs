@@ -14,26 +14,32 @@ namespace synosscamera.station.Model.ApiInfo
         /// <summary>
         /// Status of the camera
         /// </summary>
+        [JsonProperty("status")]
         public CameraStatus Status { get; set; }
         /// <summary>
         /// Name of the camera
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; }
         /// <summary>
         /// IP Address of the camera
         /// </summary>
+        [JsonProperty("host")]
         public string Host { get; set; }
         /// <summary>
         /// Port of the camera
         /// </summary>
+        [JsonProperty("port")]
         public int Port { get; set; }
         /// <summary>
         /// Is camera deleted
         /// </summary>
+        [JsonProperty("deleted")]
         public bool Deleted { get; set; }
         /// <summary>
         /// Is camera muted
         /// </summary>
+        [JsonProperty("muted")]
         public bool Muted { get; set; }
         /// <summary>
         /// Recording status of the camera
@@ -57,5 +63,11 @@ namespace synosscamera.station.Model.ApiInfo
         /// Is video mirrored
         /// </summary>
         public bool VideoMirror { get; set; }
+
+        /// <summary>
+        /// Camera detail info
+        /// </summary>
+        [JsonProperty("detailInfo")]
+        public CameraDetailInfo DetailInfo { get; set; }
     }
 }

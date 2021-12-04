@@ -153,6 +153,10 @@
                 public static class Methods
                 {
                     /// <summary>
+                    /// Add or edit camera settings
+                    /// </summary>
+                    public const string Save = "Save";
+                    /// <summary>
                     /// List available cameras
                     /// </summary>
                     public const string List = "List";
@@ -223,6 +227,47 @@
                     /// Camera disabled.
                     /// </summary>
                     public const int CameraDisabled = 402;
+                }
+            }
+
+            /// <summary>
+            /// Api Info
+            /// </summary>
+            public static class ApiHomeMode
+            {
+                /// <summary>
+                /// Get and set home mode infos
+                /// </summary>
+                public const string Name = "SYNO.SurveillanceStation.HomeMode";
+
+                /// <summary>
+                /// Methods of api
+                /// </summary>
+                public static class Methods
+                {
+                    /// <summary>
+                    /// Switch home mode on or off
+                    /// </summary>
+                    public const string Switch = "Switch";
+                    /// <summary>
+                    /// Get info
+                    /// </summary>
+                    public const string GetInfo = "GetInfo";
+                }
+
+                /// <summary>
+                /// Api specific error codes
+                /// </summary>
+                public static class ErrorCodes
+                {
+                    /// <summary>
+                    /// Operation failed.
+                    /// </summary>
+                    public const int OperationFailed = 400;
+                    /// <summary>
+                    /// Parameter invalid.
+                    /// </summary>
+                    public const int ParameterInvalid = 401;
                 }
             }
         }

@@ -30,6 +30,7 @@ namespace synosscamera.api.Infrastructure
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)src.Status))
                 .ForMember(dest => dest.RecordingStatus, opt => opt.MapFrom(src => (int)src.RecordingStatus))
                 .ForMember(dest => dest.Ip, opt => opt.MapFrom(src => src.Host));
+            CreateMap<synosscamera.station.Model.ApiInfo.CameraDetailInfo, synosscamera.core.Model.Dto.Camera.CameraDetailInfo>();
         }
     }
 }

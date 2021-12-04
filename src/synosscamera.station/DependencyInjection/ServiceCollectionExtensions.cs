@@ -70,12 +70,14 @@ namespace synosscamera.station.DependencyInjection
             services.AddScoped<ApiAuth>();
             services.AddScoped<ApiCamera>();
             services.AddScoped<ApiExternalRecording>();
+            services.AddScoped<ApiHomeMode>();
 
             // add apis with interface also - this is for util to update/sync tokens
             services.AddScoped<IStationApi, ApiInfo>();
             services.AddScoped<IStationApi, ApiAuth>();
             services.AddScoped<IStationApi, ApiCamera>();
             services.AddScoped<IStationApi, ApiExternalRecording>();
+            services.AddScoped<IStationApi, ApiHomeMode>();
 
             return services;
         }
