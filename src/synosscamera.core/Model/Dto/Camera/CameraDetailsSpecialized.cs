@@ -15,7 +15,7 @@ namespace synosscamera.core.Model.Dto.Camera
         /// <summary>
         /// Status of the camera
         /// </summary>
-        [JsonConverter(converterType: typeof(StringEnumConverter))]
+        //[JsonConverter(converterType: typeof(StringEnumConverter))]
         public CameraState Status { get; set; }
         /// <summary>
         /// Name of the camera
@@ -40,7 +40,7 @@ namespace synosscamera.core.Model.Dto.Camera
         /// <summary>
         /// Recording status of the camera
         /// </summary>
-        [JsonConverter(converterType: typeof(StringEnumConverter))]
+        //[JsonConverter(converterType: typeof(StringEnumConverter))]
         public RecordingState RecordingStatus { get; set; }
         /// <summary>
         /// Url of taking a snapshot

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using synosscamera.core;
 using synosscamera.core.Abstractions;
 using synosscamera.station.Abstractions;
 using synosscamera.station.Configuration;
@@ -46,8 +47,11 @@ namespace synosscamera.station.Api
         /// <returns>Api response from station</returns>
         public async Task<StationResponseBase> StartRecordingAsync(int cameraId, CancellationToken cancellation = default)
         {
+            var cacheKey = $"{ApiCamera.CameraInfoKey}::{cameraId}";
+
             if (await VerifyLoggedIn(cancellation))
             {
+                Logger.LogDebug("Start external recording at station for camera '{cameraId}'.", cameraId);
 
                 var query = await GetUrl(StationConstants.Api.ApiExternalRecording.Methods.Record,
                     StationConstants.Api.ApiExternalRecording.Actions.Start, version: 1, parameter: new System.Collections.Generic.Dictionary<string, object>()
@@ -59,7 +63,8 @@ namespace synosscamera.station.Api
 
                 if (response?.Success == true)
                 {
-                    Logger.LogDebug("Started external recording of camera '{cameraId}' on station.", cameraId);
+                    Cache.Remove(Constants.Cache.SettingKeys.CameraInfoCache, cacheKey);
+                    Logger.LogDebug("Started external recording of camera '{cameraId}' on station and removed camerinfo cache.", cameraId);
                     return response;
                 }
                 else
@@ -88,8 +93,11 @@ namespace synosscamera.station.Api
         /// <returns>Api response from station</returns>
         public async Task<StationResponseBase> StopRecordingAsync(int cameraId, CancellationToken cancellation = default)
         {
+            var cacheKey = $"{ApiCamera.CameraInfoKey}::{cameraId}";
+
             if (await VerifyLoggedIn(cancellation))
             {
+                Logger.LogDebug("Stop external recording at station for camera '{cameraId}'.", cameraId);
 
                 var query = await GetUrl(StationConstants.Api.ApiExternalRecording.Methods.Record,
                     StationConstants.Api.ApiExternalRecording.Actions.Stop, version: 1, parameter: new System.Collections.Generic.Dictionary<string, object>()
@@ -101,7 +109,8 @@ namespace synosscamera.station.Api
 
                 if (response?.Success == true)
                 {
-                    Logger.LogDebug("Stopped external recording of camera '{cameraId}' on station.", cameraId);
+                    Cache.Remove(Constants.Cache.SettingKeys.CameraInfoCache, cacheKey);
+                    Logger.LogDebug("Stopped external recording of camera '{cameraId}' on station and removed camerinfo cache.", cameraId);
                     return response;
                 }
                 else

@@ -47,6 +47,56 @@ namespace synosscamera.api.Controllers
         }
 
         /// <summary>
+        /// Get the current home mode information
+        /// </summary>
+        /// <remarks> 
+        /// <para>
+        /// <code>Get api/homemode</code>
+        /// </para>
+        /// <para>
+        /// Your connection to surveillance station must be completed at server level in order to connect sucessfully!<br/>
+        /// You can use the <code>api/camera/{id}</code> endpoint to get current state of recording!
+        /// </para>
+        /// </remarks>
+        /// <returns>Returns information about the current home-mode setting.</returns>
+        /// <response code="200">Response object containing home modeinformation.</response>    
+        /// <response code="401">Authentication is required in order to read the home mode.</response>
+        /// <response code="403">The current authenticated client or user does not have permissions to read the home mode.</response>
+        /// <response code="408">The connection to surveillance station or a camera timed out. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="429">Max tries reached at Surveillance API level. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="500">If a general error occured. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="501">A called API, used method or version is not available at the SurveillanceStation. An ApiErrorResponse result will be sent within the response body.</response>
+        /// <response code="503">May occure if a limitation is reached. Retry the request later. An ApiErrorResponse result will be sent within the response body.</response>
+        [HttpGet("homemode")]
+        [ProducesResponseType(typeof(HomeModeInfoResponse), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 403)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 408)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 429)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 500)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 501)]
+        [ProducesResponseType(typeof(ApiErrorResponse), 503)]
+        public async Task<IActionResult> GetHomeMode()
+        {
+            try
+            {
+                var resp = await _apiHomeMode.GetInfo(HttpContext.RequestAborted);
+
+                var ret = new HomeModeInfoResponse();
+                ret.Data = _mapper.Map<HomeModeInfo>(resp.Data);
+
+                return Ok(ret);
+            }
+            catch (StationApiException sex)
+            {
+                return StatusCode((int)sex.ResponseStatus, sex.ErrorResponse);
+            }
+            catch (ApiClientException sex)
+            {
+                return StatusCode((int)sex.ResponseStatus, sex.ErrorResponse);
+            }
+        }
+        /// <summary>
         /// Activate or deactivate the Home-Mode
         /// </summary>
         /// <remarks> 
@@ -68,7 +118,7 @@ namespace synosscamera.api.Controllers
         /// <response code="500">If a general error occured. An ApiErrorResponse result will be sent within the response body.</response>
         /// <response code="501">A called API, used method or version is not available at the SurveillanceStation. An ApiErrorResponse result will be sent within the response body.</response>
         /// <response code="503">May occure if a limitation is reached. Retry the request later. An ApiErrorResponse result will be sent within the response body.</response>
-        [HttpPost("/homemode")]
+        [HttpPost("homemode")]
         [ProducesResponseType(typeof(SuccessResponse), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(ApiErrorResponse), 403)]

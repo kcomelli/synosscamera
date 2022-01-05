@@ -228,6 +228,8 @@ namespace synosscamera.station.Api
                         statusCode = HttpStatusCode.NotImplemented;
                         break;
                 }
+
+                Logger.LogError("SurveillanceStation API error: '{errorCode}' {message}", error.Code.ToString(), message);
             }
 
             return (ret, statusCode);

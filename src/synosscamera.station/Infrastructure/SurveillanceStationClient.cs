@@ -48,9 +48,16 @@ namespace synosscamera.station.Infrastructure
 
             if (SynoToken.IsPresent())
             {
-                Logger.LogDebug("Using preset SynoToken token.");
-                Logger.LogTrace("Setting SynoToken token {synoToken} to access REST Api endpoint {apiUri}.", SynoToken, ApiUri);
-                client.DefaultRequestHeaders.Add(StationConstants.ApiDefaults.TokenHeaderName, SynoToken);
+                if (client.DefaultRequestHeaders.Contains(StationConstants.ApiDefaults.TokenHeaderName))
+                {
+                    Logger.LogDebug("Reuse existing SynoToken in headers.");
+                }
+                else
+                {
+                    Logger.LogDebug("Using preset SynoToken token.");
+                    Logger.LogTrace("Setting SynoToken token {synoToken} to access REST Api endpoint {apiUri}.", SynoToken, ApiUri);
+                    client.DefaultRequestHeaders.Add(StationConstants.ApiDefaults.TokenHeaderName, SynoToken);
+                }
             }
         }
         /// <inheritdoc/>

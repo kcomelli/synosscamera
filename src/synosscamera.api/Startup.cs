@@ -127,7 +127,8 @@ namespace synosscamera.api
             services.AddOptions();
 
             services.AddControllers()
-                    .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
+                .AddNewtonsoftJson();
+                    //.AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddAuthentication(o =>
             {

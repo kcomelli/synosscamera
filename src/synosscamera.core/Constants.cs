@@ -69,13 +69,21 @@
                 public const string ApiKeyAuthenticationCacheKey = "ApiKeyAuthenticationCache";
 
                 /// <summary>
-                /// Cache key string the resolved list of api's
+                /// Cache key string for the resolved list of api's
                 /// </summary>
                 public const string StationApiListCache = "StationApiListCache";
                 /// <summary>
-                /// Cache key string the resolved list of cameras
+                /// Cache key string for the resolved list of cameras
                 /// </summary>
                 public const string StationCameraListCache = "StationCameraListCache";
+                /// <summary>
+                /// Cache key string for the home mode
+                /// </summary>
+                public const string HomeModeCache = "HomeModeCache";
+                /// <summary>
+                /// Cache key string for the camera info cache
+                /// </summary>
+                public const string CameraInfoCache = "CameraInfoCache";
             }
         }
     }

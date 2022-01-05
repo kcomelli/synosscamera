@@ -1,4 +1,7 @@
-﻿using synosscamera.station.Api;
+﻿using synosscamera.core.Diagnostics;
+using synosscamera.core.Extensions;
+using synosscamera.station.Api;
+using synosscamera.station.Model.ApiInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +13,7 @@ namespace synosscamera.station.Internals
     /// <summary>
     /// Internal utilities
     /// </summary>
-    internal static class ApiUtilities
+    public static class ApiUtilities
     {
         private const int _segmentsPerDay = 48;
         private const int _days = 7;
@@ -70,6 +73,34 @@ namespace synosscamera.station.Internals
         }
 
         /// <summary>
+        ///Transform a record schedule stirng to an 2 dimensional array
+        /// </summary>
+        /// <param name="schedule"></param>
+        /// <returns></returns>
+        public static int[,] RecordScheduleFromString(string schedule)
+        {
+            schedule.CheckArgumentNullOrEmpty(nameof(schedule));
+            int day = 0;
+            int segment = 0;
+
+            var ret = new int[_days, _segmentsPerDay];
+
+            for (int i= 0; i < schedule.Length; i++)
+            {
+                ret[day, segment] = int.Parse(schedule[i].ToString());
+                segment++;
+
+                if(segment >= _segmentsPerDay)
+                {
+                    day++;
+                    segment = 0;
+                }
+            }
+
+            return ret;
+        }
+
+        /// <summary>
         /// Converts a recording schedule to a string
         /// </summary>
         /// <param name="schedule"></param>
@@ -125,6 +156,56 @@ namespace synosscamera.station.Internals
                     weekSchedule[i, j] = (int)schedule;
 
             return weekSchedule;
+        }
+
+        /// <summary>
+        /// Gets the records status from a schedule
+        /// </summary>
+        /// <param name="schedule"></param>
+        /// <param name="currentStatus"></param>
+        /// <returns></returns>
+        public static RecordingStatus RecordingStatusFromSchedule(int[,] schedule, RecordingStatus currentStatus)
+        {
+            if(schedule == null || schedule.Length == 0)
+                return currentStatus;
+
+            var now = DateTime.Now;
+            var day = (int)now.DayOfWeek;
+
+            var curHour = now.Hour;
+            var curMin = now.Minute;
+
+            var timeIdx = (curHour * 2) + (curMin > 30 ? 1 : 0);
+
+            var scheduleMode = schedule[day, timeIdx];
+            return (RecordingStatus)scheduleMode;
+        }
+
+        /// <summary>
+        /// Gets the records status from a schedule
+        /// </summary>
+        /// <param name="schedule"></param>
+        /// <param name="currentStatus"></param>
+        /// <returns></returns>
+        public static RecordingStatus RecordingStatusFromSchedule(string schedule, RecordingStatus currentStatus)
+        {
+            if (schedule.IsMissing())
+                return currentStatus;
+
+            var scheduleArray = RecordScheduleFromString(schedule);
+            if (scheduleArray == null || scheduleArray.Length == 0)
+                return currentStatus;
+
+            var now = DateTime.Now;
+            var day = (int)now.DayOfWeek;
+
+            var curHour = now.Hour;
+            var curMin = now.Minute;
+
+            var timeIdx = (curHour * 2) + (curMin > 30 ? 1 : 0);
+
+            var scheduleMode = scheduleArray[day, timeIdx];
+            return (RecordingStatus)scheduleMode;
         }
     }
 }
