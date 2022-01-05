@@ -9,6 +9,7 @@ using synosscamera.core.Model.Dto;
 using synosscamera.core.Model.Dto.Camera;
 using synosscamera.station.Api;
 using synosscamera.station.Infrastructure;
+using synosscamera.station.Internals;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,6 +29,7 @@ namespace synosscamera.api.Controllers
         private readonly ILogger _logger;
         private readonly ApiCamera _apiCamera;
         private readonly ApiExternalRecording _apiRecording;
+        private readonly ApiHomeMode _apiHomeMode;
         private readonly IMapper _mapper;
 
         /// <summary>
@@ -35,19 +37,22 @@ namespace synosscamera.api.Controllers
         /// </summary>
         /// <param name="cameraApi">Camnera API</param>
         /// <param name="recordingApi"></param>
+        /// <param name="apiHomeMode"></param>
         /// <param name="logger">Logger</param>
         /// <param name="mapper"></param>
-        public CameraController(ApiCamera cameraApi, ApiExternalRecording recordingApi, ILogger<CameraController> logger, IMapper mapper)
+        public CameraController(ApiCamera cameraApi, ApiExternalRecording recordingApi, ApiHomeMode apiHomeMode, ILogger<CameraController> logger, IMapper mapper)
         {
             logger.CheckArgumentNull(nameof(logger));
             cameraApi.CheckArgumentNull(nameof(cameraApi));
             recordingApi.CheckArgumentNull(nameof(recordingApi));
+            apiHomeMode.CheckArgumentNull(nameof(apiHomeMode));
             mapper.CheckArgumentNull(nameof(mapper));
 
             _logger = logger;
             _apiCamera = cameraApi;
             _mapper = mapper;
             _apiRecording = recordingApi;
+            _apiHomeMode = apiHomeMode;
         }
 
         /// <summary>
@@ -140,7 +145,30 @@ namespace synosscamera.api.Controllers
 
                 var ret = new CameraInfoResponse();
                 if (cameras.Data.Cameras.Any())
+                {
                     ret.Data = _mapper.Map<CameraDetailsSpecialized>(cameras.Data.Cameras.First());
+
+                    if(ret.Data.RecordingStatus == RecordingState.None)
+                    {
+
+                        try
+                        {
+                            // check if station is in home mode
+                            var homeModeInfo = await _apiHomeMode.GetInfo(HttpContext.RequestAborted);
+
+                            if (homeModeInfo.Data?.On == true && homeModeInfo.Data?.RecordScheduleOn == true)
+                            {
+                                // check if recording is active via home mode schedule
+                                ret.Data.RecordingStatus = (RecordingState)(int)ApiUtilities.RecordingStatusFromSchedule(homeModeInfo.Data.RecordSchedule, (station.Model.ApiInfo.RecordingStatus)(int)ret.Data.RecordingStatus);
+
+                            }
+                        }
+                        catch
+                        {
+                            // do not throw
+                        }
+                    }
+                }
                 else
                     return NotFound(new ApiErrorResponse()
                     {

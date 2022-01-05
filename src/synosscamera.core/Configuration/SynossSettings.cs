@@ -28,6 +28,14 @@ namespace synosscamera.core.Configuration
                 {
                     Constants.Cache.SettingKeys.StationCameraListCache,
                     new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Minutes, AbsoluteExpiration = 5 }
+                },
+                {
+                    Constants.Cache.SettingKeys.HomeModeCache,
+                    new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Seconds, AbsoluteExpiration = 120, SlidingExpiration = 30 }
+                },
+                {
+                    Constants.Cache.SettingKeys.CameraInfoCache,
+                    new CacheSettings() { Enabled = true, TimeoutUnit = CacheTimeoutUnit.Minutes, AbsoluteExpiration = 120, SlidingExpiration = 5 }
                 }
             };
         }

@@ -57,6 +57,7 @@ namespace synosscamera.station.Api
         /// <returns></returns>
         public async Task<ApiAuthLoginResponse> LoginAsync(CancellationToken cancellationToken = default)
         {
+            Logger.LogDebug("Logging into station.");
             var query = await GetUrl(StationConstants.Api.ApiAuth.Methods.Login, version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "account",  Settings.Username },
@@ -99,6 +100,8 @@ namespace synosscamera.station.Api
         /// <returns></returns>
         public async Task<ApiAuthLogoutResponse> LogoutAsync(CancellationToken cancellationToken = default)
         {
+            Logger.LogDebug("Logging out from station.");
+
             var query = await GetUrl(StationConstants.Api.ApiAuth.Methods.Logout, version: 3, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "session",  Settings.SessionNameForStation }

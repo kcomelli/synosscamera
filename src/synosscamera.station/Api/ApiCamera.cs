@@ -24,6 +24,10 @@ namespace synosscamera.station.Api
         /// CameraList cache key
         /// </summary>
         internal const string CameraListKey = "cameralistresponse";
+        /// <summary>
+        /// CameraInfo cache key
+        /// </summary>
+        internal const string CameraInfoKey = "camerainforesponse";
 
         /// <summary>
         /// Constructor of the class
@@ -57,6 +61,8 @@ namespace synosscamera.station.Api
                 Logger.LogDebug("Loaded camera list from cache.");
                 return resp;
             }
+
+            Logger.LogDebug("Loading camera list from station.");
 
             if (await VerifyLoggedIn(cancellation))
             {
@@ -100,9 +106,17 @@ namespace synosscamera.station.Api
         /// <returns>Api response from station</returns>
         public async Task<ApiCameraGetInfoResponse> GetCameraInfoAsync(int cameraId, CancellationToken cancellation = default)
         {
+            var cacheKey = $"{CameraInfoKey}::{cameraId}";
+
+            if (Cache.TryGetValue<ApiCameraGetInfoResponse>(Constants.Cache.SettingKeys.CameraInfoCache, cacheKey, out ApiCameraGetInfoResponse resp))
+            {
+                Logger.LogDebug("Loaded camera info for camera '{cameraId}' from cache.", cameraId);
+                return resp;
+            }
 
             if (await VerifyLoggedIn(cancellation))
             {
+                Logger.LogDebug("Querying camera info from station for camera '{cameraId}'.", cameraId);
 
                 var query = await GetUrl(StationConstants.Api.ApiCamera.Methods.GetInfo, version: 8, parameter: new System.Collections.Generic.Dictionary<string, object>()
                 {
@@ -116,17 +130,27 @@ namespace synosscamera.station.Api
 
                 if (response?.Success == true)
                 {
-                    Logger.LogDebug("Retrieved camera info form station.");
+                    Logger.LogDebug("Retrieved camera info form station for camera '{cameraId}'.", cameraId);
+
+                    foreach (var cam in response.Data.Cameras)
+                    {
+                        if(cam.RecordingStatus == RecordingStatus.None && cam.DetailInfo?.CamSchedule?.Length > 0)
+                        {
+                            cam.RecordingStatus = ApiUtilities.RecordingStatusFromSchedule(cam.DetailInfo?.CamSchedule, cam.RecordingStatus);
+                        }
+                    }
+
+                    Cache.Set<ApiCameraGetInfoResponse>(Constants.Cache.SettingKeys.CameraInfoCache, cacheKey, response);
                     return response;
                 }
                 else
                 {
-                    Logger.LogDebug("Error loading camera info form station with code '{errorCode}'.", response?.Error?.Code ?? -1);
+                    Logger.LogDebug("Error loading camera info '{cameraId}' form station with code '{errorCode}'.", cameraId, response?.Error?.Code ?? -1);
                     var ex = Client.LastError as StationApiException;
                     if (ex == null)
                         ex = new StationApiException("Error loading camera info from station");
 
-                    var errorInfo = ErrorResponseFromStationError(response.Error);
+                    var errorInfo = ErrorResponseFromStationError(response?.Error);
                     ex.ErrorResponse = errorInfo.error;
                     ex.UpdateStatusCode(errorInfo.statusCode);
 
@@ -148,8 +172,12 @@ namespace synosscamera.station.Api
         /// <returns></returns>
         public async Task<ApiCameraSaveResponse> ChangeSchedule(int cameraId, RecordSchedule schedule, DateTime? from = null, DateTime? to = null, CancellationToken cancellation = default)
         {
+            var cacheKey = $"{CameraInfoKey}::{cameraId}";
+
             if (await VerifyLoggedIn(cancellation))
             {
+                Logger.LogDebug("Changing camera schedule at station for camera '{cameraId}'.", cameraId);
+
                 #region Tests
                 //var query = await GetFormData(StationConstants.Api.ApiCamera.Methods.Save, version: 9, parameter: new System.Collections.Generic.Dictionary<string, object>()
                 //{
@@ -188,7 +216,8 @@ namespace synosscamera.station.Api
 
                 if (response?.Success == true)
                 {
-                    Logger.LogDebug("Sucessfully changed schedule.");
+                    Cache.Remove(Constants.Cache.SettingKeys.CameraInfoCache, cacheKey);
+                    Logger.LogDebug("Sucessfully changed schedule of camera '{cameraId}' and removed camerinfo cache.", cameraId);
                     return response;
                 }
                 else

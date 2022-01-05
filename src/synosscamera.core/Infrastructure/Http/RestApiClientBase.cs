@@ -26,6 +26,8 @@ namespace synosscamera.core.Infrastructure.Http
 
         private readonly Version _defaultRequestVersion = HttpVersion.Version11;
 
+        private HttpClient _client;
+
         /// <summary>
         /// Constructor of the class
         /// </summary>
@@ -142,7 +144,9 @@ namespace synosscamera.core.Infrastructure.Http
             ApiUri.CheckArgumentNullOrEmpty("ApiEndpoint");
 
             Logger.LogDebug("Using ApiUri '{apiUri}'", ApiUri.EnsureTrailingSlash());
-            client.BaseAddress = new Uri(ApiUri.EnsureTrailingSlash());
+            if(client.BaseAddress == null)
+                client.BaseAddress = new Uri(ApiUri.EnsureTrailingSlash());
+
             client.DefaultRequestHeaders.Accept.Clear();
 
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -175,7 +179,8 @@ namespace synosscamera.core.Infrastructure.Http
             await VerifyOptions(token).ConfigureAwait(false);
             await VerifySecurityAsync(token).ConfigureAwait(false);
 
-            using (var client = await GetHttpClient().ConfigureAwait(false))
+            //using (var client = await GetHttpClient().ConfigureAwait(false))
+            var client = await GetHttpClient();
             {
                 token.ThrowIfCancellationRequested();
                 var targetRequestUri = apiAction.RemoveLeadingSlash() + (string.IsNullOrEmpty(uriParameters) ? "" : "?" + uriParameters);
@@ -234,7 +239,8 @@ namespace synosscamera.core.Infrastructure.Http
             await VerifyOptions(token).ConfigureAwait(false);
             await VerifySecurityAsync(token).ConfigureAwait(false);
 
-            using (var client = await GetHttpClient().ConfigureAwait(false))
+            //using (var client = await GetHttpClient().ConfigureAwait(false))
+            var client = await GetHttpClient();
             {
                 var targetRequestUri = apiAction.RemoveLeadingSlash() + (string.IsNullOrEmpty(uriParameters) ? "" : "?" + uriParameters);
 
@@ -289,7 +295,8 @@ namespace synosscamera.core.Infrastructure.Http
             await VerifyOptions(token).ConfigureAwait(false);
             await VerifySecurityAsync(token).ConfigureAwait(false);
 
-            using (var client = await GetHttpClient().ConfigureAwait(false))
+            //using (var client = await GetHttpClient().ConfigureAwait(false))
+            var client = await GetHttpClient();
             {
                 var targetRequestUri = apiAction.RemoveLeadingSlash() + (string.IsNullOrEmpty(uriParameters) ? "" : "?" + uriParameters);
                 await PopulateOptionsToClientHeaders(client, state, token).ConfigureAwait(false);
@@ -343,7 +350,8 @@ namespace synosscamera.core.Infrastructure.Http
             await VerifyOptions(token).ConfigureAwait(false);
             await VerifySecurityAsync(token).ConfigureAwait(false);
 
-            using (var client = await GetHttpClient().ConfigureAwait(false))
+            //using (var client = await GetHttpClient().ConfigureAwait(false))
+            var client = await GetHttpClient();
             {
                 var targetRequestUri = apiAction.RemoveLeadingSlash() + (string.IsNullOrEmpty(uriParameters) ? "" : "?" + uriParameters);
                 await PopulateOptionsToClientHeaders(client, state, token).ConfigureAwait(false);
@@ -536,8 +544,11 @@ namespace synosscamera.core.Infrastructure.Http
             // we use named clients
             // just register your client configuration by using the class/type name of the api client
             // and you will get the corrent instance here
-            var client = _clientFactory.CreateClient(this.GetType().Name);
-            return Task.FromResult(client);
+
+            if(_client == null)
+                _client = _clientFactory.CreateClient(this.GetType().Name);
+
+            return Task.FromResult(_client);
         }
 
         /// <summary>

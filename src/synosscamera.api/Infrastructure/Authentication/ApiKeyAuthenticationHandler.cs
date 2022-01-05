@@ -56,7 +56,7 @@ namespace synosscamera.api.Infrastructure.Authentication
                 var lastValue = Request.Path.ToString().RemoveTrailingSlash().Split('/').LastOrDefault();
                 if (lastValue.IsPresent())
                 {
-                    _logger.LogInformation("Extracted valid api key token from request path.");
+                    _logger.LogDebug("Extracted valid api key token from request path.");
                     _logger.LogTrace("Extracted api key {apiKey} from request path for scheme '{scheme}'.", lastValue, Scheme.Name);
                     return lastValue;
                 }
@@ -72,7 +72,7 @@ namespace synosscamera.api.Infrastructure.Authentication
             {
                 if (Request.Query.TryGetValue(Options.TokenQueryParameterName, out StringValues tokenFromQueryString))
                 {
-                    _logger.LogInformation("Extracted valid api key token from request query string.");
+                    _logger.LogDebug("Extracted valid api key token from request query string.");
                     _logger.LogTrace("Extracted api key {apiKey} from request querystring for scheme '{scheme}'.", tokenFromQueryString.ToString(), Scheme.Name);
                     return tokenFromQueryString.ToString();
                 }

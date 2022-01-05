@@ -6,14 +6,11 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["src/synosscamera.api/synosscamera.api.csproj", "src/synosscamera.api/"]
-COPY ["src/synosscamera.core/synosscamera.core.csproj", "src/synosscamera.core/"]
-COPY ["src/synosscamera.station/synosscamera.station.csproj", "src/synosscamera.station/"]
-COPY ["src/synosscamera.redis/synosscamera.redis.csproj", "src/synosscamera.redis/"]
-COPY ["src/synosscamera.prometheus/synosscamera.prometheus.csproj", "src/synosscamera.prometheus/"]
-RUN dotnet restore "src/synosscamera.api/synosscamera.api.csproj"
+COPY ["synosscamera.api/synosscamera.api.csproj", "synosscamera.api/"]
+
+RUN dotnet restore "synosscamera.api/synosscamera.api.csproj"
 COPY . .
-WORKDIR "/src/src/synosscamera.api"
+WORKDIR "/src/synosscamera.api"
 RUN dotnet build "synosscamera.api.csproj" -c Release -o /app/build
 
 FROM build AS publish

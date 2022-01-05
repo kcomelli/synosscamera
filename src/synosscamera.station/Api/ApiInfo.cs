@@ -55,6 +55,8 @@ namespace synosscamera.station.Api
                 return resp;
             }
 
+            Logger.LogDebug("Query API list from station.");
+
             var query = await GetUrl(StationConstants.Api.ApiInfo.Methods.Query, parameter: new System.Collections.Generic.Dictionary<string, object>()
             {
                 { "query", queryApiFilter }
