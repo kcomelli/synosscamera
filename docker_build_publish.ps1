@@ -1,8 +1,8 @@
 cd src
-docker build -t synosscamera-api -f synosscamera.api/Dockerfile .
+docker build -t shcome-api -f shcome.api/Dockerfile .
 
-docker tag synosscamera-api:latest kcomelli/synosscamera-api
+docker tag shcome-api:latest kcomelli/shcome-api
 
-docker push kcomelli/synosscamera-api:latest
+docker push kcomelli/shcome-api:latest
 
 cd ..

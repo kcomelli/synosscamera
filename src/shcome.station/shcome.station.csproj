@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\shcome.core\shcome.core.csproj" />
+      <ProjectReference Include="..\shcome.prometheus\shcome.prometheus.csproj" />
+      <ProjectReference Include="..\shcome.redis\shcome.redis.csproj" />
+    </ItemGroup>
+
+</Project>

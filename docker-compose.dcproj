@@ -6,7 +6,7 @@
     <ProjectGuid>d7686906-c11a-449d-857c-894c2ecdfcb4</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>synosscamera.api</DockerServiceName>
+    <DockerServiceName>shcome.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
