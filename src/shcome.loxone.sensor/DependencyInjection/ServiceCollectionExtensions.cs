@@ -40,12 +40,20 @@ namespace shcome.loxone.sensor.DependencyInjection
             // add importer services
             services.AddScoped<EnergieImporter>();
             services.AddScoped<LightningImporter>();
+            services.AddScoped<RainingImporter>();
+            services.AddScoped<SunshineImporter>();
+            services.AddScoped<WindSpeedImporter>();
+            services.AddScoped<WindAlarmImporter>();
             services.AddScoped<PresenceDetectionImporter>();
             services.AddScoped<TemperatureImporter>();
 
             // add background workers for continous data imports
             services.AddHostedService<ImportBackgroundWorker<EnergieImporter>>();
             services.AddHostedService<ImportBackgroundWorker<LightningImporter>>();
+            services.AddHostedService<ImportBackgroundWorker<RainingImporter>>();
+            services.AddHostedService<ImportBackgroundWorker<SunshineImporter>>();
+            services.AddHostedService<ImportBackgroundWorker<WindAlarmImporter>>();
+            services.AddHostedService<ImportBackgroundWorker<WindSpeedImporter>>();
             services.AddHostedService<ImportBackgroundWorker<PresenceDetectionImporter>>();
             services.AddHostedService<ImportBackgroundWorker<TemperatureImporter>>();
 
