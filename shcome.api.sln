@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "shcome.api", "src\shcome.api\shcome.api.csproj", "{35C7E0E0-66F4-4DD9-80BB-F94E3E0187BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "000-CI-CD", "000-CI-CD", "{D4EDE156-2FFF-43FE-B627-42FB995E8DE9}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		docker_build_publish.ps1 = docker_build_publish.ps1
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -33,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "shcome.testsuite", "src\shc
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7686906-C11A-449D-857C-894C2ECDFCB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shcome.loxone.sensor", "src\shcome.loxone.sensor\shcome.loxone.sensor.csproj", "{8E0F590E-8D9B-44C2-B939-041D353C148C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "shcome.loxone.sensor", "src\shcome.loxone.sensor\shcome.loxone.sensor.csproj", "{8E0F590E-8D9B-44C2-B939-041D353C148C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
