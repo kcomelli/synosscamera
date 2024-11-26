@@ -134,7 +134,7 @@ namespace shcome.loxone.sensor.Importer
                         {
                             if (!latestReading.HasValue || latestReading.Value < sensorData.Timestamp)
                             {
-                                Logger.LogInformation("Adding sensor value: temperature='{temperature}'.", sensorData.Value);
+                                Logger.LogDebug("Adding sensor value: temperature='{temperature}'.", sensorData.Value);
                                 await InsertReading(sensor, ReadingDescriminator, sensorData.Timestamp ?? default(DateTime), sensorData.Value, cancellationToken);
                                 dataAdded++;
                             }

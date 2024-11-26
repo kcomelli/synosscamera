@@ -149,7 +149,7 @@ namespace shcome.loxone.sensor.Importer
                         {
                             if (!latestReading.HasValue || latestReading.Value < sensorData.Timestamp)
                             {
-                                Logger.LogInformation("Adding sensor value: gesamt='{gesamt}' and aktuell='{aktuell}'.", sensorData.Value, sensorData.Value2);
+                                Logger.LogDebug("Adding sensor value: gesamt='{gesamt}' and aktuell='{aktuell}'.", sensorData.Value, sensorData.Value2);
 
                                 await AddGesamt(sensor, sensorData.Timestamp ?? default(DateTime), sensorData.Value, cancellationToken);
                                 await AddAktuell(sensor, sensorData.Timestamp ?? default(DateTime), sensorData.Value2, cancellationToken);

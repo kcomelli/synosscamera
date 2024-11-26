@@ -26,6 +26,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using shcome.loxone.sensor.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using shcome.core.Abstractions;
+using shcome.api.Infrastructure.Logging;
 
 namespace shcome.api
 {
@@ -147,6 +150,8 @@ namespace shcome.api
                 o.ReadKeyFromPath = false;
             });
 
+            services.TryAddSingleton<ILogEnricher, SerilogLogEnricher>();
+
             services.AddCoreComponents(Configuration);
             services.AddSurveillanceStationApis(Configuration);
 
@@ -194,8 +199,10 @@ namespace shcome.api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider, IServiceProvider serviceProvider)
         {
+            AppServiceProvider.ServiceProvider = serviceProvider;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
